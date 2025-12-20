@@ -1,0 +1,33 @@
+{
+  "name": "design-os",
+  "description": "Complete Design OS workflow for product planning, design system, and UI component generation",
+  "version": "1.0.0",
+  "author": {
+    "name": "Brian Casel",
+    "email": "brian@briancasel.com"
+  },
+  "homepage": "https://buildermethods.com/design-os",
+  "repository": "https://github.com/buildermethods/design-os",
+  "license": "MIT",
+  "keywords": [
+    "design",
+    "ui",
+    "product-planning",
+    "components",
+    "react",
+    "tailwind"
+  ],
+  "category": "productivity",
+  "commands": [
+    "../design-os/product-vision.md",
+    "../design-os/product-roadmap.md",
+    "../design-os/data-model.md",
+    "../design-os/design-tokens.md",
+    "../design-os/design-shell.md",
+    "../design-os/shape-section.md",
+    "../design-os/sample-data.md",
+    "../design-os/design-screen.md",
+    "../design-os/screenshot-design.md",
+    "../design-os/export-product.md"
+  ]
+}

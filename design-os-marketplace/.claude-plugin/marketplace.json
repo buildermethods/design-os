@@ -1,0 +1,149 @@
+{
+  "name": "buildermethods",
+  "owner": {
+    "name": "Brian Casel",
+    "email": "brian@briancasel.com"
+  },
+  "metadata": {
+    "description": "Design OS - The missing design process between your idea and your codebase",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "design-os",
+      "source": "./design-os-core",
+      "description": "Complete Design OS workflow for product planning, design system, and UI component generation",
+      "version": "1.0.0",
+      "author": {
+        "name": "Brian Casel",
+        "email": "brian@briancasel.com"
+      },
+      "homepage": "https://buildermethods.com/design-os",
+      "repository": "https://github.com/briancasel/design-os",
+      "license": "MIT",
+      "keywords": [
+        "design",
+        "ui",
+        "product-planning",
+        "components",
+        "react",
+        "tailwind"
+      ],
+      "category": "productivity",
+      "commands": [
+        "./commands/"
+      ],
+      "strict": false
+    },
+    {
+      "name": "product-vision",
+      "source": {
+        "source": "github",
+        "repo": "buildermethods/design-os",
+        "ref": "main",
+        "path": ".claude/commands/design-os"
+      },
+      "description": "Define your product vision and roadmap with AI-guided planning",
+      "version": "1.0.0",
+      "author": {
+        "name": "Brian Casel"
+      },
+      "homepage": "https://buildermethods.com/design-os",
+      "keywords": [
+        "product-vision",
+        "roadmap",
+        "planning",
+        "strategy"
+      ],
+      "category": "product-management",
+      "commands": [
+        "product-vision.md",
+        "product-roadmap.md",
+        "data-model.md"
+      ],
+      "strict": false
+    },
+    {
+      "name": "design-system",
+      "source": {
+        "source": "github",
+        "repo": "buildermethods/design-os",
+        "ref": "main",
+        "path": ".claude/commands/design-os"
+      },
+      "description": "Design your design system with tokens, colors, typography, and application shell",
+      "version": "1.0.0",
+      "author": {
+        "name": "Brian Casel"
+      },
+      "keywords": [
+        "design-system",
+        "ui-kit",
+        "tokens",
+        "colors",
+        "typography"
+      ],
+      "category": "design",
+      "commands": [
+        "design-tokens.md",
+        "design-shell.md"
+      ],
+      "strict": false
+    },
+    {
+      "name": "section-designer",
+      "source": {
+        "source": "github",
+        "repo": "buildermethods/design-os",
+        "ref": "main",
+        "path": ".claude/commands/design-os"
+      },
+      "description": "Design individual sections with requirements, sample data, and screen designs",
+      "version": "1.0.0",
+      "author": {
+        "name": "Brian Casel"
+      },
+      "keywords": [
+        "ui-design",
+        "sections",
+        "components",
+        "mockups"
+      ],
+      "category": "design",
+      "commands": [
+        "shape-section.md",
+        "sample-data.md",
+        "design-screen.md",
+        "screenshot-design.md"
+      ],
+      "strict": false
+    },
+    {
+      "name": "exporter",
+      "source": {
+        "source": "github",
+        "repo": "buildermethods/design-os",
+        "ref": "main",
+        "path": ".claude/commands/design-os"
+      },
+      "description": "Export production-ready React components and implementation guides",
+      "version": "1.0.0",
+      "author": {
+        "name": "Brian Casel"
+      },
+      "keywords": [
+        "export",
+        "react",
+        "components",
+        "code-generation",
+        "tailwind"
+      ],
+      "category": "development",
+      "commands": [
+        "export-product.md"
+      ],
+      "strict": false
+    }
+  ]
+}
