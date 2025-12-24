@@ -53,6 +53,7 @@ Design the persistent navigation and layout that wraps all sections.
 - `/shape-section` — Define the specification
 - `/sample-data` — Create sample data and types
 - `/design-screen` — Create screen designs
+- `/add-accessibility` — Analyze and document accessibility (optional)
 - `/screenshot-design` — Capture screenshots
 
 ### 7. Export (`/export-product`)
@@ -83,6 +84,7 @@ product/                           # Product definition (portable)
         ├── spec.md                # Section specification
         ├── data.json              # Sample data for screen designs
         ├── types.ts               # TypeScript interfaces
+        ├── accessibility.md       # Accessibility report and checklist
         └── *.png                  # Screenshots
 
 src/

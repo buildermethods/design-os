@@ -25,7 +25,8 @@ Once the foundation is set, work through each section:
 1. **Shape the Section** — Define scope and requirements
 2. **Create Sample Data** — Generate realistic data and types
 3. **Design the Screen** — Build the actual React components
-4. **Capture Screenshots** — Document the design (optional)
+4. **Add Accessibility** — Analyze and document accessibility (optional)
+5. **Capture Screenshots** — Document the design (optional)
 
 Repeat for each section in your roadmap.
 
@@ -51,6 +52,7 @@ See [Export](export.md) for details on what's included and how to use it.
 | `/shape-section` | Define a section's scope and requirements |
 | `/sample-data` | Generate sample data and TypeScript types |
 | `/design-screen` | Create screen design components |
+| `/add-accessibility` | Analyze and document accessibility |
 | `/screenshot-design` | Capture screenshots |
 | `/export-product` | Generate the complete handoff package |
 

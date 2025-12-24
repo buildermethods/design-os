@@ -103,7 +103,29 @@ If the spec implies multiple views (list view, detail view, form, etc.), you'll 
 
 **Important:** Restart your dev server after creating screen designs to see the changes.
 
-## 4. Capture Screenshots (Optional)
+## 4. Add Accessibility (Optional)
+
+```
+/add-accessibility
+```
+
+Analyze your screen designs for accessibility compliance and generate a WCAG-based checklist and recommendations.
+
+This command:
+1. Analyzes all screen design components in the section
+2. Checks for common accessibility issues (ARIA labels, keyboard navigation, color contrast, semantic HTML, etc.)
+3. Generates a comprehensive accessibility report with:
+   - WCAG compliance checklist (Level A, AA, AAA)
+   - Screen-specific recommendations
+   - Priority-ordered action items
+
+The accessibility report helps ensure your designs are accessible to all users and provides actionable guidance for improvements.
+
+**Requires:** Screen designs must exist (run `/design-screen` first)
+
+**Creates:** `product/sections/[section-id]/accessibility.md`
+
+## 5. Capture Screenshots (Optional)
 
 ```
 /screenshot-design

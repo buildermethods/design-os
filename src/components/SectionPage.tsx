@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { PhaseWarningBanner } from '@/components/PhaseWarningBanner'
 import { SpecCard } from '@/components/SpecCard'
 import { DataCard } from '@/components/DataCard'
+import { AccessibilityCard } from '@/components/AccessibilityCard'
 import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
 import { loadProductData } from '@/lib/product-loader'
 import { loadSectionData } from '@/lib/section-loader'
@@ -13,15 +14,16 @@ import { ChevronRight, Layout, Image, Download, ArrowRight, LayoutList } from 'l
 
 /**
  * Determine the status of each step based on what data exists
- * Steps: 1. Section Overview (Spec), 2. Sample Data, 3. Screen Designs, 4. Screenshots
+ * Steps: 1. Section Overview (Spec), 2. Sample Data, 3. Screen Designs, 4. Accessibility, 5. Screenshots
  */
 function getStepStatuses(sectionData: ReturnType<typeof loadSectionData> | null): StepStatus[] {
   const hasSpec = !!sectionData?.specParsed
   const hasData = !!sectionData?.data
   const hasScreenDesigns = !!(sectionData?.screenDesigns && sectionData.screenDesigns.length > 0)
+  const hasAccessibility = !!sectionData?.accessibility
   const hasScreenshots = !!(sectionData?.screenshots && sectionData.screenshots.length > 0)
 
-  const steps: boolean[] = [hasSpec, hasData, hasScreenDesigns, hasScreenshots]
+  const steps: boolean[] = [hasSpec, hasData, hasScreenDesigns, hasAccessibility, hasScreenshots]
   const firstIncomplete = steps.findIndex((done) => !done)
 
   return steps.map((done, index) => {
@@ -144,8 +146,13 @@ export function SectionPage() {
           )}
         </StepIndicator>
 
-        {/* Step 4: Screenshots */}
-        <StepIndicator step={4} status={stepStatuses[3]} isLast={!requiredStepsComplete}>
+        {/* Step 4: Accessibility */}
+        <StepIndicator step={4} status={stepStatuses[3]}>
+          <AccessibilityCard accessibility={sectionData?.accessibility || null} />
+        </StepIndicator>
+
+        {/* Step 5: Screenshots */}
+        <StepIndicator step={5} status={stepStatuses[4]} isLast={!requiredStepsComplete}>
           {!sectionData?.screenshots || sectionData.screenshots.length === 0 ? (
             <Card className="border-stone-200 dark:border-stone-700 shadow-sm border-dashed">
               <CardContent className="py-8">
@@ -214,7 +221,7 @@ export function SectionPage() {
 
         {/* Next Step - shown when required steps (Spec, Data, Screen Designs) are complete */}
         {requiredStepsComplete && (
-          <StepIndicator step={5} status="current" isLast>
+          <StepIndicator step={6} status="current" isLast>
             <div className="space-y-3">
               {/* If there's a next section, show two options */}
               {nextSection ? (

@@ -7,7 +7,7 @@
  * - src/sections/[section-id]/[PageName].tsx  - Screen design pages
  */
 
-import type { SectionData, ParsedSpec, ScreenDesignInfo, ScreenshotInfo } from '@/types/section'
+import type { SectionData, ParsedSpec, ScreenDesignInfo, ScreenshotInfo, AccessibilityInfo, AccessibilityChecklistItem } from '@/types/section'
 import type { ComponentType } from 'react'
 
 // Load spec.md files from product/sections at build time
@@ -31,6 +31,13 @@ const screenDesignModules = import.meta.glob('/src/sections/*/*.tsx') as Record<
 // Load screenshot files from product/sections at build time
 const screenshotFiles = import.meta.glob('/product/sections/*/*.png', {
   query: '?url',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+
+// Load accessibility.md files from product/sections at build time
+const accessibilityFiles = import.meta.glob('/product/sections/*/accessibility.md', {
+  query: '?raw',
   import: 'default',
   eager: true,
 }) as Record<string, string>
@@ -189,6 +196,89 @@ export function getSectionScreenshots(sectionId: string): ScreenshotInfo[] {
 }
 
 /**
+ * Parse accessibility.md content into AccessibilityInfo structure
+ *
+ * Expected format:
+ * # Accessibility Report for [Section Title]
+ *
+ * ## Overview
+ * [Description]
+ *
+ * **Analysis Date:** [Date]
+ * **Screen Designs Analyzed:** [Number]
+ * **Overall Compliance:** [Status]
+ *
+ * ## WCAG Compliance Checklist
+ * ### Level A (Basic Requirements)
+ * - [ ] Item 1
+ * - [x] Item 2
+ * ...
+ */
+export function parseAccessibility(md: string): AccessibilityInfo | null {
+  if (!md || !md.trim()) return null
+
+  try {
+    // Extract analysis date
+    const dateMatch = md.match(/\*\*Analysis Date:\*\*\s*(.+)/i)
+    const lastAnalyzed = dateMatch?.[1]?.trim() || null
+
+    // Extract checklist items from WCAG Compliance Checklist section
+    const checklist: AccessibilityChecklistItem[] = []
+    
+    // Match Level A, AA, AAA sections
+    const levelSections = md.matchAll(/### Level (A{1,3})[^#]*\n([\s\S]*?)(?=\n## |\n### |$)/g)
+    
+    for (const match of levelSections) {
+      const level = match[1] as 'A' | 'AA' | 'AAA'
+      const content = match[2]
+      
+      // Extract checklist items (lines starting with - [ ] or - [x])
+      const itemLines = content.split('\n').filter(line => {
+        const trimmed = line.trim()
+        return trimmed.startsWith('- [') && (trimmed.includes(']') || trimmed.includes('x]'))
+      })
+      
+      for (const line of itemLines) {
+        const trimmed = line.trim()
+        const isChecked = trimmed.includes('[x]') || trimmed.includes('[X]')
+        const description = trimmed.replace(/^-\s*\[[xX\s]\]\s*/, '').trim()
+        
+        if (description) {
+          checklist.push({
+            id: `${level}-${description.toLowerCase().replace(/\s+/g, '-').slice(0, 50)}`,
+            level,
+            description,
+            status: isChecked ? 'pass' : 'not-checked',
+          })
+        }
+      }
+    }
+
+    return {
+      report: md,
+      lastAnalyzed,
+      checklist,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get accessibility information for a specific section
+ */
+export function getSectionAccessibility(sectionId: string): AccessibilityInfo | null {
+  const accessibilityPath = `/product/sections/${sectionId}/accessibility.md`
+  const accessibilityContent = accessibilityFiles[accessibilityPath] || null
+  
+  if (!accessibilityContent) {
+    return null
+  }
+
+  return parseAccessibility(accessibilityContent)
+}
+
+/**
  * Load screen design component dynamically
  */
 export function loadScreenDesignComponent(
@@ -217,6 +307,7 @@ export function loadSectionData(sectionId: string): SectionData {
     data,
     screenDesigns: getSectionScreenDesigns(sectionId),
     screenshots: getSectionScreenshots(sectionId),
+    accessibility: getSectionAccessibility(sectionId),
   }
 }
 

@@ -1,7 +1,7 @@
-import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft } from 'lucide-react'
+import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft, Accessibility } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export'
+type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export' | 'accessibility'
 
 interface EmptyStateProps {
   type: EmptyStateType
@@ -66,6 +66,12 @@ const config: Record<EmptyStateType, {
     title: 'Ready to export',
     command: '/export-product',
     description: 'Generate the complete handoff package',
+  },
+  accessibility: {
+    icon: Accessibility,
+    title: 'No accessibility analysis yet',
+    command: '/add-accessibility',
+    description: 'Analyze screen designs and generate accessibility checklist',
   },
 }
 

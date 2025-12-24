@@ -9,6 +9,7 @@ export interface SectionData {
   data: Record<string, unknown> | null
   screenDesigns: ScreenDesignInfo[]
   screenshots: ScreenshotInfo[]
+  accessibility: AccessibilityInfo | null
 }
 
 export interface ParsedSpec {
@@ -30,4 +31,18 @@ export interface ScreenshotInfo {
   name: string
   path: string
   url: string
+}
+
+export interface AccessibilityInfo {
+  report: string | null
+  lastAnalyzed: string | null
+  checklist: AccessibilityChecklistItem[]
+}
+
+export interface AccessibilityChecklistItem {
+  id: string
+  level: 'A' | 'AA' | 'AAA'
+  description: string
+  status: 'pass' | 'warning' | 'fail' | 'not-checked'
+  screen?: string
 }
