@@ -24,9 +24,23 @@ const exportZipFiles = import.meta.glob('/product-plan.zip', {
 /**
  * Slugify a string for use as an ID
  * Converts " & " to "-and-" to maintain semantic meaning
+ * Handles Turkish characters properly
  */
 function slugify(str: string): string {
+  // Turkish character mappings
+  const turkishMap: Record<string, string> = {
+    'ı': 'i', 'İ': 'i', 'i': 'i', 'I': 'i',
+    'ş': 's', 'Ş': 's',
+    'ğ': 'g', 'Ğ': 'g',
+    'ü': 'u', 'Ü': 'u',
+    'ö': 'o', 'Ö': 'o',
+    'ç': 'c', 'Ç': 'c',
+  }
+
   return str
+    .split('')
+    .map(char => turkishMap[char] || char)
+    .join('')
     .toLowerCase()
     .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
     .replace(/[^a-z0-9]+/g, '-')
