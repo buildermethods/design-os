@@ -122,20 +122,33 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
   try {
     const sections: Section[] = []
 
-    // Match sections with pattern ### N. Title
-    const sectionMatches = [...md.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
+    // Split by lines and parse manually for more reliability
+    // Handle both Unix (\n) and Windows (\r\n) line endings
+    const lines = md.split(/\r?\n/)
 
-    for (const match of sectionMatches) {
-      const order = parseInt(match[1], 10)
-      const title = match[2].trim()
-      const description = match[3].trim()
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim() // Trim to remove any remaining whitespace
 
-      sections.push({
-        id: slugify(title),
-        title,
-        description,
-        order,
-      })
+      // Match pattern: ### N. Title
+      const match = line.match(/^###\s+(\d+)\.\s*(.+)$/)
+
+      if (match) {
+        const order = parseInt(match[1], 10)
+        const title = match[2].trim()
+
+        // Get description from next non-empty line
+        let description = ''
+        if (i + 1 < lines.length) {
+          description = lines[i + 1].trim()
+        }
+
+        sections.push({
+          id: slugify(title),
+          title,
+          description,
+          order,
+        })
+      }
     }
 
     // Sort by order
@@ -146,7 +159,8 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
     }
 
     return { sections }
-  } catch {
+  } catch (error) {
+    console.error('[Parser] Error:', error)
     return null
   }
 }
