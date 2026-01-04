@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(design-os:product-vision)",
+      "Bash(test:*)",
+      "mcp__MCP_DOCKER__mcp-find",
+      "mcp__MCP_DOCKER__search_repositories",
+      "WebSearch",
+      "Skill(validate-output)"
+    ]
+  }
+}
