@@ -5,7 +5,7 @@ import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
 import { PhaseWarningBanner } from '@/components/PhaseWarningBanner'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
-import { loadProductData } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
 import { getSectionScreenDesigns, getSectionScreenshots, hasSectionSpec, hasSectionData } from '@/lib/section-loader'
 import { ChevronRight, Check, Circle } from 'lucide-react'
 
@@ -33,9 +33,9 @@ function getSectionProgress(sectionId: string): SectionProgress {
 
 export function SectionsPage() {
   const navigate = useNavigate()
-  const productData = useMemo(() => loadProductData(), [])
+  const { productData, loading } = useProductData()
 
-  const sections = productData.roadmap?.sections || []
+  const sections = productData?.roadmap?.sections || []
 
   // Calculate progress for each section
   const sectionProgressMap = useMemo(() => {
@@ -51,6 +51,23 @@ export function SectionsPage() {
     const p = sectionProgressMap[s.id]
     return p?.hasSpec && p?.hasData && p?.hasScreenDesigns
   }).length
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="space-y-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
+              Sections
+            </h1>
+            <p className="text-stone-600 dark:text-stone-400">
+              Loading...
+            </p>
+          </div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   return (
     <AppLayout>

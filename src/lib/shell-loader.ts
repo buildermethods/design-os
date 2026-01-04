@@ -1,18 +1,12 @@
 /**
  * Shell loading and parsing utilities
+ * Uses dynamic fetch() for specs, import.meta.glob for components
  */
 
 import type { ShellSpec, ShellInfo } from '@/types/product'
 import type { ComponentType, ReactNode } from 'react'
 
-// Load shell spec markdown file at build time
-const shellSpecFiles = import.meta.glob('/product/shell/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
-
-// Load shell components lazily
+// Load shell components lazily (these still need build-time resolution)
 const shellComponentModules = import.meta.glob('/src/shell/components/*.tsx') as Record<
   string,
   () => Promise<{ default: ComponentType }>
@@ -23,6 +17,20 @@ const shellPreviewModules = import.meta.glob('/src/shell/*.tsx') as Record<
   string,
   () => Promise<{ default: ComponentType }>
 >
+
+/**
+ * Fetch a text file with cache busting for development
+ */
+async function fetchText(path: string): Promise<string | null> {
+  try {
+    const cacheBuster = import.meta.env.DEV ? `?t=${Date.now()}` : ''
+    const response = await fetch(`${path}${cacheBuster}`)
+    if (!response.ok) return null
+    return await response.text()
+  } catch {
+    return null
+  }
+}
 
 /**
  * Parse shell spec.md content into ShellSpec structure
@@ -43,13 +51,16 @@ const shellPreviewModules = import.meta.glob('/src/shell/*.tsx') as Record<
 export function parseShellSpec(md: string): ShellSpec | null {
   if (!md || !md.trim()) return null
 
+  // Normalize line endings (Windows \r\n -> Unix \n)
+  const content = md.replace(/\r\n/g, '\n')
+
   try {
     // Extract overview
-    const overviewMatch = md.match(/## Overview\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const overviewMatch = content.match(/## Overview\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const overview = overviewMatch?.[1]?.trim() || ''
 
     // Extract navigation items
-    const navSection = md.match(/## Navigation Structure\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const navSection = content.match(/## Navigation Structure\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const navigationItems: string[] = []
 
     if (navSection?.[1]) {
@@ -63,7 +74,7 @@ export function parseShellSpec(md: string): ShellSpec | null {
     }
 
     // Extract layout pattern
-    const layoutMatch = md.match(/## Layout Pattern\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const layoutMatch = content.match(/## Layout Pattern\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const layoutPattern = layoutMatch?.[1]?.trim() || ''
 
     // Return null if we couldn't parse anything meaningful
@@ -72,7 +83,7 @@ export function parseShellSpec(md: string): ShellSpec | null {
     }
 
     return {
-      raw: md,
+      raw: content,
       overview,
       navigationItems,
       layoutPattern,
@@ -83,18 +94,10 @@ export function parseShellSpec(md: string): ShellSpec | null {
 }
 
 /**
- * Check if shell components exist
+ * Check if shell components exist (synchronous - build-time check)
  */
 export function hasShellComponents(): boolean {
-  // Check if AppShell.tsx exists
-  const exists = '/src/shell/components/AppShell.tsx' in shellComponentModules
-  // Debug: log available shell components
-  console.log('[Shell] hasShellComponents check:', {
-    exists,
-    availableComponents: Object.keys(shellComponentModules),
-    lookingFor: '/src/shell/components/AppShell.tsx'
-  })
-  return exists
+  return '/src/shell/components/AppShell.tsx' in shellComponentModules
 }
 
 /**
@@ -131,11 +134,18 @@ export function loadShellPreview(): (() => Promise<{ default: ComponentType }>) 
 }
 
 /**
- * Load the complete shell info
+ * Load shell spec from markdown file (async)
  */
-export function loadShellInfo(): ShellInfo | null {
-  const specContent = shellSpecFiles['/product/shell/spec.md']
-  const spec = specContent ? parseShellSpec(specContent) : null
+export async function loadShellSpec(): Promise<ShellSpec | null> {
+  const content = await fetchText('/product/shell/spec.md')
+  return content ? parseShellSpec(content) : null
+}
+
+/**
+ * Load the complete shell info (async)
+ */
+export async function loadShellInfo(): Promise<ShellInfo | null> {
+  const spec = await loadShellSpec()
   const hasComponents = hasShellComponents()
 
   // Return null if neither spec nor components exist
@@ -147,21 +157,23 @@ export function loadShellInfo(): ShellInfo | null {
 }
 
 /**
- * Check if shell has been defined (spec or components)
+ * Check if shell has been defined (async for spec, sync for components)
  */
-export function hasShell(): boolean {
-  return hasShellSpec() || hasShellComponents()
+export async function hasShell(): Promise<boolean> {
+  const spec = await loadShellSpec()
+  return spec !== null || hasShellComponents()
 }
 
 /**
- * Check if shell spec has been defined
+ * Check if shell spec has been defined (async)
  */
-export function hasShellSpec(): boolean {
-  return '/product/shell/spec.md' in shellSpecFiles
+export async function hasShellSpec(): Promise<boolean> {
+  const spec = await loadShellSpec()
+  return spec !== null
 }
 
 /**
- * Get list of shell component names
+ * Get list of shell component names (synchronous - build-time check)
  */
 export function getShellComponentNames(): string[] {
   const names: string[] = []

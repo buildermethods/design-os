@@ -1,15 +1,9 @@
 /**
  * Data model loading and parsing utilities
+ * Uses dynamic fetch() for hot-reloading support in development
  */
 
 import type { DataModel, Entity } from '@/types/product'
-
-// Load data model markdown file at build time
-const dataModelFiles = import.meta.glob('/product/data-model/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
 
 /**
  * Parse data-model.md content into DataModel structure
@@ -33,12 +27,15 @@ const dataModelFiles = import.meta.glob('/product/data-model/*.md', {
 export function parseDataModel(md: string): DataModel | null {
   if (!md || !md.trim()) return null
 
+  // Normalize line endings (Windows \r\n -> Unix \n)
+  const content = md.replace(/\r\n/g, '\n')
+
   try {
     const entities: Entity[] = []
     const relationships: string[] = []
 
     // Extract entities section
-    const entitiesSection = md.match(/## Entities\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const entitiesSection = content.match(/## Entities\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
 
     if (entitiesSection?.[1]) {
       // Match ### EntityName followed by description
@@ -52,7 +49,7 @@ export function parseDataModel(md: string): DataModel | null {
     }
 
     // Extract relationships section
-    const relationshipsSection = md.match(/## Relationships\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const relationshipsSection = content.match(/## Relationships\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
 
     if (relationshipsSection?.[1]) {
       const lines = relationshipsSection[1].split('\n')
@@ -76,16 +73,31 @@ export function parseDataModel(md: string): DataModel | null {
 }
 
 /**
- * Load the data model from markdown file
+ * Fetch a text file with cache busting for development
  */
-export function loadDataModel(): DataModel | null {
-  const content = dataModelFiles['/product/data-model/data-model.md']
+async function fetchText(path: string): Promise<string | null> {
+  try {
+    const cacheBuster = import.meta.env.DEV ? `?t=${Date.now()}` : ''
+    const response = await fetch(`${path}${cacheBuster}`)
+    if (!response.ok) return null
+    return await response.text()
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Load the data model from markdown file (async)
+ */
+export async function loadDataModel(): Promise<DataModel | null> {
+  const content = await fetchText('/product/data-model/data-model.md')
   return content ? parseDataModel(content) : null
 }
 
 /**
- * Check if data model has been defined
+ * Check if data model has been defined (async)
  */
-export function hasDataModel(): boolean {
-  return '/product/data-model/data-model.md' in dataModelFiles
+export async function hasDataModel(): Promise<boolean> {
+  const dataModel = await loadDataModel()
+  return dataModel !== null
 }

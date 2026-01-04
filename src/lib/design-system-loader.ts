@@ -1,13 +1,23 @@
 /**
  * Design system loading utilities for colors and typography
+ * Uses dynamic fetch() for hot-reloading support in development
  */
 
 import type { DesignSystem, ColorTokens, TypographyTokens } from '@/types/product'
 
-// Load JSON files from product/design-system at build time
-const designSystemFiles = import.meta.glob('/product/design-system/*.json', {
-  eager: true,
-}) as Record<string, { default: Record<string, string> }>
+/**
+ * Fetch a JSON file with cache busting for development
+ */
+async function fetchJson<T>(path: string): Promise<T | null> {
+  try {
+    const cacheBuster = import.meta.env.DEV ? `?t=${Date.now()}` : ''
+    const response = await fetch(`${path}${cacheBuster}`)
+    if (!response.ok) return null
+    return await response.json()
+  } catch {
+    return null
+  }
+}
 
 /**
  * Load color tokens from colors.json
@@ -19,11 +29,10 @@ const designSystemFiles = import.meta.glob('/product/design-system/*.json', {
  *   "neutral": "stone"
  * }
  */
-export function loadColorTokens(): ColorTokens | null {
-  const colorsModule = designSystemFiles['/product/design-system/colors.json']
-  if (!colorsModule?.default) return null
+export async function loadColorTokens(): Promise<ColorTokens | null> {
+  const colors = await fetchJson<Record<string, string>>('/product/design-system/colors.json')
+  if (!colors) return null
 
-  const colors = colorsModule.default
   if (!colors.primary || !colors.secondary || !colors.neutral) {
     return null
   }
@@ -45,11 +54,10 @@ export function loadColorTokens(): ColorTokens | null {
  *   "mono": "IBM Plex Mono"
  * }
  */
-export function loadTypographyTokens(): TypographyTokens | null {
-  const typographyModule = designSystemFiles['/product/design-system/typography.json']
-  if (!typographyModule?.default) return null
+export async function loadTypographyTokens(): Promise<TypographyTokens | null> {
+  const typography = await fetchJson<Record<string, string>>('/product/design-system/typography.json')
+  if (!typography) return null
 
-  const typography = typographyModule.default
   if (!typography.heading || !typography.body) {
     return null
   }
@@ -62,11 +70,13 @@ export function loadTypographyTokens(): TypographyTokens | null {
 }
 
 /**
- * Load the complete design system
+ * Load the complete design system (async)
  */
-export function loadDesignSystem(): DesignSystem | null {
-  const colors = loadColorTokens()
-  const typography = loadTypographyTokens()
+export async function loadDesignSystem(): Promise<DesignSystem | null> {
+  const [colors, typography] = await Promise.all([
+    loadColorTokens(),
+    loadTypographyTokens(),
+  ])
 
   // Return null if neither colors nor typography are defined
   if (!colors && !typography) {
@@ -77,25 +87,25 @@ export function loadDesignSystem(): DesignSystem | null {
 }
 
 /**
- * Check if design system has been defined (at least colors or typography)
+ * Check if design system has been defined (async)
  */
-export function hasDesignSystem(): boolean {
-  return (
-    '/product/design-system/colors.json' in designSystemFiles ||
-    '/product/design-system/typography.json' in designSystemFiles
-  )
+export async function hasDesignSystem(): Promise<boolean> {
+  const designSystem = await loadDesignSystem()
+  return designSystem !== null
 }
 
 /**
- * Check if colors have been defined
+ * Check if colors have been defined (async)
  */
-export function hasColors(): boolean {
-  return '/product/design-system/colors.json' in designSystemFiles
+export async function hasColors(): Promise<boolean> {
+  const colors = await loadColorTokens()
+  return colors !== null
 }
 
 /**
- * Check if typography has been defined
+ * Check if typography has been defined (async)
  */
-export function hasTypography(): boolean {
-  return '/product/design-system/typography.json' in designSystemFiles
+export async function hasTypography(): Promise<boolean> {
+  const typography = await loadTypographyTokens()
+  return typography !== null
 }

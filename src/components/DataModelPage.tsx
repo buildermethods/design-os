@@ -1,17 +1,33 @@
-import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
 import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
-import { loadProductData } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
 
 export function DataModelPage() {
-  const productData = useMemo(() => loadProductData(), [])
-  const dataModel = productData.dataModel
+  const { productData, loading } = useProductData()
+  const dataModel = productData?.dataModel
 
   const hasDataModel = !!dataModel
   const stepStatus: StepStatus = hasDataModel ? 'completed' : 'current'
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="space-y-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
+              Data Model
+            </h1>
+            <p className="text-stone-600 dark:text-stone-400">
+              Loading...
+            </p>
+          </div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   return (
     <AppLayout>

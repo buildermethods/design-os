@@ -1,25 +1,12 @@
 /**
  * Product data loading and markdown parsing utilities
+ * Uses dynamic fetch() for hot-reloading support in development
  */
 
 import type { ProductOverview, ProductRoadmap, Problem, Section, ProductData } from '@/types/product'
-import { loadDataModel, hasDataModel } from './data-model-loader'
-import { loadDesignSystem, hasDesignSystem } from './design-system-loader'
-import { loadShellInfo, hasShell } from './shell-loader'
-
-// Load markdown files from /product/ directory at build time
-const productFiles = import.meta.glob('/product/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
-
-// Load zip files from root directory at build time
-const exportZipFiles = import.meta.glob('/product-plan.zip', {
-  query: '?url',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
+import { loadDataModel } from './data-model-loader'
+import { loadDesignSystem } from './design-system-loader'
+import { loadShellInfo } from './shell-loader'
 
 /**
  * Slugify a string for use as an ID
@@ -54,17 +41,20 @@ function slugify(str: string): string {
 export function parseProductOverview(md: string): ProductOverview | null {
   if (!md || !md.trim()) return null
 
+  // Normalize line endings (Windows \r\n -> Unix \n)
+  const content = md.replace(/\r\n/g, '\n')
+
   try {
     // Extract product name from first # heading
-    const nameMatch = md.match(/^#\s+(.+)$/m)
+    const nameMatch = content.match(/^#\s+(.+)$/m)
     const name = nameMatch?.[1]?.trim() || 'Product Overview'
 
     // Extract description - content between ## Description and next ##
-    const descMatch = md.match(/## Description\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const descMatch = content.match(/## Description\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const description = descMatch?.[1]?.trim() || ''
 
     // Extract problems - ### Problem N: Title pattern
-    const problemsSection = md.match(/## Problems & Solutions\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const problemsSection = content.match(/## Problems & Solutions\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const problems: Problem[] = []
 
     if (problemsSection?.[1]) {
@@ -78,7 +68,7 @@ export function parseProductOverview(md: string): ProductOverview | null {
     }
 
     // Extract features - bullet list after ## Key Features
-    const featuresSection = md.match(/## Key Features\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const featuresSection = content.match(/## Key Features\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const features: string[] = []
 
     if (featuresSection?.[1]) {
@@ -119,11 +109,14 @@ export function parseProductOverview(md: string): ProductOverview | null {
 export function parseProductRoadmap(md: string): ProductRoadmap | null {
   if (!md || !md.trim()) return null
 
+  // Normalize line endings (Windows \r\n -> Unix \n)
+  const content = md.replace(/\r\n/g, '\n')
+
   try {
     const sections: Section[] = []
 
     // Match sections with pattern ### N. Title
-    const sectionMatches = [...md.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
+    const sectionMatches = [...content.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
 
     for (const match of sectionMatches) {
       const order = parseInt(match[1], 10)
@@ -152,34 +145,78 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
 }
 
 /**
- * Load all product data from markdown files and other sources
+ * Fetch a text file with cache busting for development
  */
-export function loadProductData(): ProductData {
-  const overviewContent = productFiles['/product/product-overview.md']
-  const roadmapContent = productFiles['/product/product-roadmap.md']
-
-  return {
-    overview: overviewContent ? parseProductOverview(overviewContent) : null,
-    roadmap: roadmapContent ? parseProductRoadmap(roadmapContent) : null,
-    dataModel: loadDataModel(),
-    designSystem: loadDesignSystem(),
-    shell: loadShellInfo(),
+async function fetchText(path: string): Promise<string | null> {
+  try {
+    const cacheBuster = import.meta.env.DEV ? `?t=${Date.now()}` : ''
+    const response = await fetch(`${path}${cacheBuster}`)
+    if (!response.ok) return null
+    return await response.text()
+  } catch {
+    return null
   }
 }
 
 /**
- * Check if product overview has been defined
+ * Load product overview from markdown file (async)
  */
-export function hasProductOverview(): boolean {
-  return '/product/product-overview.md' in productFiles
+export async function fetchProductOverview(): Promise<ProductOverview | null> {
+  const content = await fetchText('/product/product-overview.md')
+  return content ? parseProductOverview(content) : null
 }
 
 /**
- * Check if product roadmap has been defined
+ * Load product roadmap from markdown file (async)
  */
-export function hasProductRoadmap(): boolean {
-  return '/product/product-roadmap.md' in productFiles
+export async function fetchProductRoadmap(): Promise<ProductRoadmap | null> {
+  const content = await fetchText('/product/product-roadmap.md')
+  return content ? parseProductRoadmap(content) : null
 }
+
+/**
+ * Load all product data from files (async)
+ */
+export async function fetchProductData(): Promise<ProductData> {
+  const [overview, roadmap, dataModel, designSystem, shell] = await Promise.all([
+    fetchProductOverview(),
+    fetchProductRoadmap(),
+    loadDataModel(),
+    loadDesignSystem(),
+    loadShellInfo(),
+  ])
+
+  return {
+    overview,
+    roadmap,
+    dataModel,
+    designSystem,
+    shell,
+  }
+}
+
+/**
+ * Check if product overview exists (async)
+ */
+export async function hasProductOverview(): Promise<boolean> {
+  const overview = await fetchProductOverview()
+  return overview !== null
+}
+
+/**
+ * Check if product roadmap exists (async)
+ */
+export async function hasProductRoadmap(): Promise<boolean> {
+  const roadmap = await fetchProductRoadmap()
+  return roadmap !== null
+}
+
+// Load zip files from root directory at build time (must remain sync for now)
+const exportZipFiles = import.meta.glob('/product-plan.zip', {
+  query: '?url',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
 
 /**
  * Check if export zip file exists
@@ -194,6 +231,3 @@ export function hasExportZip(): boolean {
 export function getExportZipUrl(): string | null {
   return exportZipFiles['/product-plan.zip'] || null
 }
-
-// Re-export utility functions for checking individual pieces
-export { hasDataModel, hasDesignSystem, hasShell }

@@ -3,28 +3,29 @@ import { Check, AlertTriangle, FileText, FolderTree, ChevronDown, Download, Pack
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { AppLayout } from '@/components/AppLayout'
-import { loadProductData, hasExportZip, getExportZipUrl } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
+import { hasExportZip, getExportZipUrl } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
 
 export function ExportPage() {
-  const productData = useMemo(() => loadProductData(), [])
+  const { productData, loading } = useProductData()
 
   // Get section stats
   const sectionStats = useMemo(() => {
     const allSectionIds = getAllSectionIds()
-    const sectionCount = productData.roadmap?.sections.length || 0
+    const sectionCount = productData?.roadmap?.sections.length || 0
     const sectionsWithScreenDesigns = allSectionIds.filter(id => {
       const screenDesigns = getSectionScreenDesigns(id)
       return screenDesigns.length > 0
     }).length
     return { sectionCount, sectionsWithScreenDesigns, allSectionIds }
-  }, [productData.roadmap])
+  }, [productData?.roadmap])
 
-  const hasOverview = !!productData.overview
-  const hasRoadmap = !!productData.roadmap
-  const hasDataModel = !!productData.dataModel
-  const hasDesignSystem = !!productData.designSystem
-  const hasShell = !!productData.shell
+  const hasOverview = !!productData?.overview
+  const hasRoadmap = !!productData?.roadmap
+  const hasDataModel = !!productData?.dataModel
+  const hasDesignSystem = !!productData?.designSystem
+  const hasShell = !!productData?.shell
   const hasSections = sectionStats.sectionsWithScreenDesigns > 0
 
   const requiredComplete = hasOverview && hasRoadmap && hasSections
@@ -32,6 +33,23 @@ export function ExportPage() {
   // Check for export zip
   const exportZipAvailable = hasExportZip()
   const exportZipUrl = getExportZipUrl()
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="space-y-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
+              Export
+            </h1>
+            <p className="text-stone-600 dark:text-stone-400">
+              Loading...
+            </p>
+          </div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   return (
     <AppLayout>

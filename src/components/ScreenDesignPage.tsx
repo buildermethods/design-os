@@ -4,8 +4,8 @@ import { ArrowLeft, Maximize2, GripVertical, Layout, Smartphone, Tablet, Monitor
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { loadScreenDesignComponent, sectionUsesShell } from '@/lib/section-loader'
-import { loadAppShell, hasShellComponents, loadShellInfo } from '@/lib/shell-loader'
-import { loadProductData } from '@/lib/product-loader'
+import { loadAppShell, hasShellComponents, loadShellSpec } from '@/lib/shell-loader'
+import { useProductData } from '@/lib/use-product-data'
 import React from 'react'
 
 const MIN_WIDTH = 320
@@ -19,8 +19,8 @@ export function ScreenDesignPage() {
   const isDragging = useRef(false)
 
   // Load product data to get section title
-  const productData = useMemo(() => loadProductData(), [])
-  const section = productData.roadmap?.sections.find((s) => s.id === sectionId)
+  const { productData } = useProductData()
+  const section = productData?.roadmap?.sections.find((s) => s.id === sectionId)
 
   // Handle resize drag
   const handleMouseDown = useCallback(() => {
@@ -250,8 +250,17 @@ export function ScreenDesignFullscreen() {
         // Create a wrapper that provides default props to the shell
         const ShellWrapper = ({ children }: { children?: React.ReactNode }) => {
           // Try to get navigation items from shell spec
-          const shellInfo = loadShellInfo()
-          const specNavItems = shellInfo?.spec?.navigationItems || []
+          const [shellSpec, setShellSpec] = useState<{ navigationItems: string[] } | null>(null)
+
+          useEffect(() => {
+            loadShellSpec().then(spec => {
+              if (spec) {
+                setShellSpec({ navigationItems: spec.navigationItems })
+              }
+            })
+          }, [])
+
+          const specNavItems = shellSpec?.navigationItems || []
 
           // Parse navigation items from spec (format: "**Label** → Description")
           const navigationItems = specNavItems.length > 0

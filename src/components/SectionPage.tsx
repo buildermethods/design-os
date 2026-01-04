@@ -7,7 +7,7 @@ import { PhaseWarningBanner } from '@/components/PhaseWarningBanner'
 import { SpecCard } from '@/components/SpecCard'
 import { DataCard } from '@/components/DataCard'
 import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
-import { loadProductData } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
 import { loadSectionData } from '@/lib/section-loader'
 import { ChevronRight, Layout, Image, Download, ArrowRight, LayoutList } from 'lucide-react'
 
@@ -47,8 +47,8 @@ export function SectionPage() {
   const navigate = useNavigate()
 
   // Load product data to get section info
-  const productData = useMemo(() => loadProductData(), [])
-  const sections = productData.roadmap?.sections || []
+  const { productData, loading } = useProductData()
+  const sections = productData?.roadmap?.sections || []
   const section = sections.find((s) => s.id === sectionId)
   const currentIndex = sections.findIndex((s) => s.id === sectionId)
 
@@ -57,6 +57,20 @@ export function SectionPage() {
     () => (sectionId ? loadSectionData(sectionId) : null),
     [sectionId]
   )
+
+  if (loading) {
+    return (
+      <AppLayout backTo="/sections" backLabel="Sections">
+        <div className="space-y-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
+              Loading...
+            </h1>
+          </div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   // Handle missing section
   if (!section) {

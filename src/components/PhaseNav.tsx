@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
 import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
-import { loadProductData, hasExportZip } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
+import { hasExportZip } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
 
 export type Phase = 'product' | 'data-model' | 'design' | 'sections' | 'export'
@@ -29,16 +30,16 @@ interface PhaseInfo {
   isComplete: boolean
 }
 
-function usePhaseStatuses(): PhaseInfo[] {
+function usePhaseStatuses(): { phaseInfos: PhaseInfo[]; loading: boolean } {
   const location = useLocation()
-  const productData = useMemo(() => loadProductData(), [])
+  const { productData, loading } = useProductData()
 
   // Calculate completion status for each phase
-  const hasOverview = !!productData.overview
-  const hasRoadmap = !!productData.roadmap
-  const hasDataModel = !!productData.dataModel
-  const hasDesignSystem = !!productData.designSystem
-  const hasShell = !!productData.shell
+  const hasOverview = !!productData?.overview
+  const hasRoadmap = !!productData?.roadmap
+  const hasDataModel = !!productData?.dataModel
+  const hasDesignSystem = !!productData?.designSystem
+  const hasShell = !!productData?.shell
 
   const sectionIds = useMemo(() => getAllSectionIds(), [])
   const sectionsWithScreenDesigns = useMemo(() => {
@@ -74,7 +75,7 @@ function usePhaseStatuses(): PhaseInfo[] {
     'export': exportZipExists,
   }
 
-  return phases.map(phase => {
+  const phaseInfos = phases.map(phase => {
     const isComplete = phaseComplete[phase.id]
     let status: PhaseStatus
     if (phase.id === currentPhaseId) {
@@ -86,11 +87,41 @@ function usePhaseStatuses(): PhaseInfo[] {
     }
     return { phase, status, isComplete }
   })
+
+  return { phaseInfos, loading }
 }
 
 export function PhaseNav() {
   const navigate = useNavigate()
-  const phaseInfos = usePhaseStatuses()
+  const { phaseInfos, loading } = usePhaseStatuses()
+
+  if (loading) {
+    return (
+      <nav className="flex items-center justify-center">
+        {phases.map((phase, index) => {
+          const Icon = phase.icon
+          const isFirst = index === 0
+
+          return (
+            <div key={phase.id} className="flex items-center">
+              {!isFirst && (
+                <div className="w-4 sm:w-8 lg:w-12 h-px bg-stone-200 dark:bg-stone-700" />
+              )}
+              <button
+                className="group relative flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-stone-400 dark:text-stone-500"
+                disabled
+              >
+                <Icon className="w-4 h-4 shrink-0 opacity-60" strokeWidth={1.5} />
+                <span className="text-sm font-medium hidden sm:inline opacity-60">
+                  {phase.label}
+                </span>
+              </button>
+            </div>
+          )
+        })}
+      </nav>
+    )
+  }
 
   return (
     <nav className="flex items-center justify-center">

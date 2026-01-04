@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loadProductData } from '@/lib/product-loader'
+import { fetchProductData } from '@/lib/product-loader'
+import type { ProductData } from '@/types/product'
 import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
 import { ProductOverviewCard } from '@/components/ProductOverviewCard'
@@ -39,7 +40,32 @@ function getProductPageStepStatuses(
 
 export function ProductPage() {
   const navigate = useNavigate()
-  const productData = useMemo(() => loadProductData(), [])
+  const [productData, setProductData] = useState<ProductData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProductData().then((data) => {
+      setProductData(data)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading || !productData) {
+    return (
+      <AppLayout>
+        <div className="space-y-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
+              Product Definition
+            </h1>
+            <p className="text-stone-600 dark:text-stone-400">
+              Loading...
+            </p>
+          </div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   const hasOverview = !!productData.overview
   const hasRoadmap = !!productData.roadmap

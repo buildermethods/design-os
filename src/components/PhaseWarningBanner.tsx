@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, X } from 'lucide-react'
-import { loadProductData } from '@/lib/product-loader'
+import { useProductData } from '@/lib/use-product-data'
 
 /**
  * Get a storage key based on the product name to track dismissed warnings per product
@@ -16,15 +16,15 @@ function getStorageKey(productName: string): string {
 }
 
 export function PhaseWarningBanner() {
-  const productData = useMemo(() => loadProductData(), [])
+  const { productData, loading } = useProductData()
   const [isDismissed, setIsDismissed] = useState(true) // Start dismissed to avoid flash
 
-  const hasDataModel = !!productData.dataModel
-  const hasDesignSystem = !!(productData.designSystem?.colors || productData.designSystem?.typography)
-  const hasShell = !!productData.shell?.spec
+  const hasDataModel = !!productData?.dataModel
+  const hasDesignSystem = !!(productData?.designSystem?.colors || productData?.designSystem?.typography)
+  const hasShell = !!productData?.shell?.spec
   const hasDesign = hasDesignSystem || hasShell
 
-  const productName = productData.overview?.name || 'default-product'
+  const productName = productData?.overview?.name || 'default-product'
   const storageKey = getStorageKey(productName)
 
   // Check localStorage on mount
@@ -38,8 +38,8 @@ export function PhaseWarningBanner() {
     setIsDismissed(true)
   }
 
-  // Don't show if both phases are complete or if dismissed
-  if ((hasDataModel && hasDesign) || isDismissed) {
+  // Don't show while loading, if both phases are complete, or if dismissed
+  if (loading || (hasDataModel && hasDesign) || isDismissed) {
     return null
   }
 
