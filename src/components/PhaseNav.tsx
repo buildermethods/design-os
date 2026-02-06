@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
-import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
+import { FileText, Boxes, Layout, LayoutList, Package, Server, DollarSign, TestTube } from 'lucide-react'
 import { loadProductData, hasExportZip } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
 
-export type Phase = 'product' | 'data-model' | 'design' | 'sections' | 'export'
+export type Phase = 'product' | 'data-model' | 'design' | 'sections' | 'tech-stack' | 'cost-estimator' | 'qa-tests' | 'export'
 
 interface PhaseConfig {
   id: Phase
@@ -18,6 +18,9 @@ const phases: PhaseConfig[] = [
   { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
   { id: 'design', label: 'Design', icon: Layout, path: '/design' },
   { id: 'sections', label: 'Sections', icon: LayoutList, path: '/sections' },
+  { id: 'tech-stack', label: 'Tech Stack', icon: Server, path: '/tech-stack' },
+  { id: 'cost-estimator', label: 'Costs', icon: DollarSign, path: '/cost-estimator' },
+  { id: 'qa-tests', label: 'QA Tests', icon: TestTube, path: '/qa-tests' },
   { id: 'export', label: 'Export', icon: Package, path: '/export' },
 ]
 
@@ -58,6 +61,12 @@ function usePhaseStatuses(): PhaseInfo[] {
     currentPhaseId = 'design'
   } else if (currentPath === '/sections' || currentPath.startsWith('/sections/')) {
     currentPhaseId = 'sections'
+  } else if (currentPath === '/tech-stack') {
+    currentPhaseId = 'tech-stack'
+  } else if (currentPath === '/cost-estimator') {
+    currentPhaseId = 'cost-estimator'
+  } else if (currentPath === '/qa-tests') {
+    currentPhaseId = 'qa-tests'
   } else if (currentPath === '/export') {
     currentPhaseId = 'export'
   }
@@ -65,12 +74,19 @@ function usePhaseStatuses(): PhaseInfo[] {
   // Check if export zip exists
   const exportZipExists = hasExportZip()
 
+  const hasTechStack = !!productData.techStack
+  const hasCostEstimate = !!productData.costEstimate
+  const hasQaTests = !!productData.qaTests
+
   // Determine completion status
   const phaseComplete: Record<Phase, boolean> = {
     'product': hasOverview && hasRoadmap,
     'data-model': hasDataModel,
     'design': hasDesignSystem || hasShell,
     'sections': hasSections,
+    'tech-stack': hasTechStack,
+    'cost-estimator': hasCostEstimate,
+    'qa-tests': hasQaTests,
     'export': exportZipExists,
   }
 

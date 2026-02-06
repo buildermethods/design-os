@@ -148,7 +148,7 @@ export function SectionsPage() {
 
         {/* Next Phase Button - shown when all sections are complete */}
         {sections.length > 0 && completedSections === sections.length && (
-          <NextPhaseButton nextPhase="export" />
+          <NextPhaseButton nextPhase="tech-stack" />
         )}
       </div>
     </AppLayout>

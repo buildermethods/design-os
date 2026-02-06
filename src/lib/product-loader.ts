@@ -6,6 +6,9 @@ import type { ProductOverview, ProductRoadmap, Problem, Section, ProductData } f
 import { loadDataModel, hasDataModel } from './data-model-loader'
 import { loadDesignSystem, hasDesignSystem } from './design-system-loader'
 import { loadShellInfo, hasShell } from './shell-loader'
+import { loadTechStack, hasTechStack } from './tech-stack-loader'
+import { loadCostEstimate, hasCostEstimate } from './cost-estimator-loader'
+import { loadQaTests, hasQaTests } from './qa-tests-loader'
 
 // Load markdown files from /product/ directory at build time
 const productFiles = import.meta.glob('/product/*.md', {
@@ -164,6 +167,9 @@ export function loadProductData(): ProductData {
     dataModel: loadDataModel(),
     designSystem: loadDesignSystem(),
     shell: loadShellInfo(),
+    techStack: loadTechStack(),
+    costEstimate: loadCostEstimate(),
+    qaTests: loadQaTests(),
   }
 }
 
@@ -196,4 +202,4 @@ export function getExportZipUrl(): string | null {
 }
 
 // Re-export utility functions for checking individual pieces
-export { hasDataModel, hasDesignSystem, hasShell }
+export { hasDataModel, hasDesignSystem, hasShell, hasTechStack, hasCostEstimate, hasQaTests }

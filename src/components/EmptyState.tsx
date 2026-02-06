@@ -1,7 +1,7 @@
-import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft } from 'lucide-react'
+import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft, Server, DollarSign, TestTube } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export'
+type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export' | 'tech-stack' | 'cost-estimator' | 'qa-tests'
 
 interface EmptyStateProps {
   type: EmptyStateType
@@ -66,6 +66,24 @@ const config: Record<EmptyStateType, {
     title: 'Ready to export',
     command: '/export-product',
     description: 'Generate the complete handoff package',
+  },
+  'tech-stack': {
+    icon: Server,
+    title: 'No tech stack defined yet',
+    command: '/tech-stack',
+    description: 'Define the technology choices and architecture for your product',
+  },
+  'cost-estimator': {
+    icon: DollarSign,
+    title: 'No cost estimate defined yet',
+    command: '/cost-estimator',
+    description: 'Estimate infrastructure costs and identify optimizations',
+  },
+  'qa-tests': {
+    icon: TestTube,
+    title: 'No QA test cases generated yet',
+    command: '/qa-tests',
+    description: 'Generate test cases for validating product functionality',
   },
 }
 

@@ -6,6 +6,9 @@ import { SectionsPage } from '@/components/SectionsPage'
 import { SectionPage } from '@/components/SectionPage'
 import { ScreenDesignPage, ScreenDesignFullscreen } from '@/components/ScreenDesignPage'
 import { ShellDesignPage, ShellDesignFullscreen } from '@/components/ShellDesignPage'
+import { TechStackPage } from '@/components/TechStackPage'
+import { CostEstimatorPage } from '@/components/CostEstimatorPage'
+import { QaTestsPage } from '@/components/QaTestsPage'
 import { ExportPage } from '@/components/ExportPage'
 
 export const router = createBrowserRouter([
@@ -44,6 +47,18 @@ export const router = createBrowserRouter([
   {
     path: '/shell/design/fullscreen',
     element: <ShellDesignFullscreen />,
+  },
+  {
+    path: '/tech-stack',
+    element: <TechStackPage />,
+  },
+  {
+    path: '/cost-estimator',
+    element: <CostEstimatorPage />,
+  },
+  {
+    path: '/qa-tests',
+    element: <QaTestsPage />,
   },
   {
     path: '/export',

@@ -85,6 +85,69 @@ export interface ShellInfo {
 }
 
 // =============================================================================
+// Tech Stack & Architecture
+// =============================================================================
+
+export interface TechChoice {
+  category: string
+  choice: string
+  rationale: string
+}
+
+export interface ArchitectureLayer {
+  name: string
+  description: string
+  components: string[]
+}
+
+export interface TechStack {
+  choices: TechChoice[]
+  architecture: ArchitectureLayer[]
+  diagram: string
+}
+
+// =============================================================================
+// Cost Estimator
+// =============================================================================
+
+export interface CostLineItem {
+  category: string
+  item: string
+  monthlyCost: number
+  notes: string
+}
+
+export interface CostTier {
+  name: string
+  users: string
+  monthlyCost: number
+  items: CostLineItem[]
+}
+
+export interface CostEstimate {
+  tiers: CostTier[]
+  optimizations: string[]
+}
+
+// =============================================================================
+// QA Test Cases
+// =============================================================================
+
+export interface TestCase {
+  id: string
+  title: string
+  section: string
+  priority: 'critical' | 'high' | 'medium' | 'low'
+  steps: string[]
+  expectedResult: string
+}
+
+export interface QaTestSuite {
+  testCases: TestCase[]
+  coverageSummary: string
+}
+
+// =============================================================================
 // Combined Product Data
 // =============================================================================
 
@@ -94,4 +157,7 @@ export interface ProductData {
   dataModel: DataModel | null
   designSystem: DesignSystem | null
   shell: ShellInfo | null
+  techStack: TechStack | null
+  costEstimate: CostEstimate | null
+  qaTests: QaTestSuite | null
 }
