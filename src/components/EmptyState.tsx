@@ -1,7 +1,7 @@
-import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft, Server, DollarSign, TestTube } from 'lucide-react'
+import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft, Server, DollarSign, TestTube, Figma } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export' | 'tech-stack' | 'cost-estimator' | 'qa-tests'
+type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export' | 'tech-stack' | 'cost-estimator' | 'qa-tests' | 'figma'
 
 interface EmptyStateProps {
   type: EmptyStateType
@@ -84,6 +84,12 @@ const config: Record<EmptyStateType, {
     title: 'No QA test cases generated yet',
     command: '/qa-tests',
     description: 'Generate test cases for validating product functionality',
+  },
+  figma: {
+    icon: Figma,
+    title: 'No Figma files linked yet',
+    command: 'product/design-system/figma.json',
+    description: 'Link your Figma design files for embedded previews and quick access',
   },
 }
 

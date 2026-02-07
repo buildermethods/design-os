@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
 import { loadProductData } from '@/lib/product-loader'
-import { ChevronRight, Layout } from 'lucide-react'
+import { ChevronRight, Layout, ExternalLink, Figma } from 'lucide-react'
 
 // Map Tailwind color names to actual color values for preview
 const colorMap: Record<string, { light: string; base: string; dark: string }> = {
@@ -34,12 +34,20 @@ const colorMap: Record<string, { light: string; base: string; dark: string }> = 
   stone: { light: '#d6d3d1', base: '#78716c', dark: '#57534e' },
 }
 
+const figmaLinkTypeLabels: Record<string, string> = {
+  file: 'Design File',
+  prototype: 'Prototype',
+  board: 'Board',
+  frame: 'Frame',
+}
+
 /**
  * Determine the status of each step on the Design page
- * Steps: 1. Design Tokens, 2. Shell Design
+ * Steps: 1. Design Tokens, 2. Figma Integration, 3. Shell Design
  */
 function getDesignPageStepStatuses(
   hasDesignSystem: boolean,
+  hasFigma: boolean,
   hasShell: boolean
 ): StepStatus[] {
   const statuses: StepStatus[] = []
@@ -51,7 +59,16 @@ function getDesignPageStepStatuses(
     statuses.push('current')
   }
 
-  // Step 2: Shell
+  // Step 2: Figma Integration (optional — skip-friendly)
+  if (hasFigma) {
+    statuses.push('completed')
+  } else if (hasDesignSystem) {
+    statuses.push('current')
+  } else {
+    statuses.push('upcoming')
+  }
+
+  // Step 3: Shell
   if (hasShell) {
     statuses.push('completed')
   } else if (hasDesignSystem) {
@@ -69,10 +86,11 @@ export function DesignPage() {
   const shell = productData.shell
 
   const hasDesignSystem = !!(designSystem?.colors || designSystem?.typography)
+  const hasFigmaLinks = !!designSystem?.figma
   const hasShell = !!shell?.spec
   const allStepsComplete = hasDesignSystem && hasShell
 
-  const stepStatuses = getDesignPageStepStatuses(hasDesignSystem, hasShell)
+  const stepStatuses = getDesignPageStepStatuses(hasDesignSystem, hasFigmaLinks, hasShell)
 
   return (
     <AppLayout>
@@ -162,8 +180,100 @@ export function DesignPage() {
           )}
         </StepIndicator>
 
-        {/* Step 2: Application Shell */}
-        <StepIndicator step={2} status={stepStatuses[1]} isLast={!allStepsComplete}>
+        {/* Step 2: Figma Integration */}
+        <StepIndicator step={2} status={stepStatuses[1]}>
+          {!designSystem?.figma ? (
+            <EmptyState type="figma" />
+          ) : (
+            <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Figma className="w-5 h-5 text-stone-500 dark:text-stone-400" strokeWidth={1.5} />
+                  Figma Integration
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {/* Figma Embed */}
+                {designSystem.figma.embedUrl && (
+                  <div>
+                    <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
+                      Preview
+                    </h4>
+                    <div className="rounded-lg overflow-hidden border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900">
+                      <iframe
+                        src={designSystem.figma.embedUrl}
+                        className="w-full"
+                        style={{ height: '400px' }}
+                        allowFullScreen
+                        title="Figma embed"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Figma Links */}
+                {designSystem.figma.links.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
+                      Linked Files
+                    </h4>
+                    <div className="space-y-2">
+                      {designSystem.figma.links.map((link, index) => (
+                        <a
+                          key={index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between gap-4 p-3 rounded-lg bg-stone-50 dark:bg-stone-800/50 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                              <Figma className="w-4 h-4 text-purple-600 dark:text-purple-400" strokeWidth={1.5} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-medium text-stone-900 dark:text-stone-100 truncate">
+                                {link.label}
+                              </p>
+                              <p className="text-xs text-stone-500 dark:text-stone-400">
+                                {figmaLinkTypeLabels[link.type] || link.type}
+                              </p>
+                            </div>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-stone-400 dark:text-stone-500 shrink-0 group-hover:text-stone-600 dark:group-hover:text-stone-300" strokeWidth={1.5} />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Direct file link */}
+                {designSystem.figma.fileUrl && !designSystem.figma.links.some(l => l.url === designSystem.figma!.fileUrl) && (
+                  <a
+                    href={designSystem.figma.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    Open in Figma
+                  </a>
+                )}
+
+                {/* Edit hint */}
+                <div className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-2.5">
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    Edit{' '}
+                    <code className="font-mono text-stone-700 dark:text-stone-300">product/design-system/figma.json</code>{' '}
+                    to update Figma links
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </StepIndicator>
+
+        {/* Step 3: Application Shell */}
+        <StepIndicator step={3} status={stepStatuses[2]} isLast={!allStepsComplete}>
           {!shell?.spec ? (
             <EmptyState type="shell" />
           ) : (
@@ -241,7 +351,7 @@ export function DesignPage() {
 
         {/* Next Phase Button - shown when all steps complete */}
         {allStepsComplete && (
-          <StepIndicator step={3} status="current" isLast>
+          <StepIndicator step={4} status="current" isLast>
             <NextPhaseButton nextPhase="sections" />
           </StepIndicator>
         )}

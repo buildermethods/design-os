@@ -66,6 +66,24 @@ export interface TypographyTokens {
 export interface DesignSystem {
   colors: ColorTokens | null
   typography: TypographyTokens | null
+  figma: FigmaIntegration | null
+}
+
+// =============================================================================
+// Figma Integration
+// =============================================================================
+
+export interface FigmaLink {
+  label: string
+  url: string
+  type: 'file' | 'prototype' | 'board' | 'frame'
+}
+
+export interface FigmaIntegration {
+  fileUrl: string
+  embedUrl: string
+  links: FigmaLink[]
+  accessToken: string
 }
 
 // =============================================================================

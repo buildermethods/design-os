@@ -3,6 +3,7 @@
  */
 
 import type { DesignSystem, ColorTokens, TypographyTokens } from '@/types/product'
+import { loadFigmaIntegration, hasFigma as hasFigmaConfig } from './figma-loader'
 
 // Load JSON files from product/design-system at build time
 const designSystemFiles = import.meta.glob('/product/design-system/*.json', {
@@ -67,13 +68,14 @@ export function loadTypographyTokens(): TypographyTokens | null {
 export function loadDesignSystem(): DesignSystem | null {
   const colors = loadColorTokens()
   const typography = loadTypographyTokens()
+  const figma = loadFigmaIntegration()
 
-  // Return null if neither colors nor typography are defined
-  if (!colors && !typography) {
+  // Return null if nothing is defined
+  if (!colors && !typography && !figma) {
     return null
   }
 
-  return { colors, typography }
+  return { colors, typography, figma }
 }
 
 /**
@@ -98,4 +100,11 @@ export function hasColors(): boolean {
  */
 export function hasTypography(): boolean {
   return '/product/design-system/typography.json' in designSystemFiles
+}
+
+/**
+ * Check if Figma integration has been configured
+ */
+export function hasFigma(): boolean {
+  return hasFigmaConfig()
 }
