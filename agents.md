@@ -45,6 +45,10 @@ Define the core entities and relationships in your product. This establishes the
 Choose your color palette (from Tailwind) and typography (from Google Fonts). These tokens are applied to all screen designs.
 **Output:** `product/design-system/colors.json`, `product/design-system/typography.json`
 
+### 4b. Figma Integration (`/figma`)
+Link your Figma design files for embedded previews and quick access from the Design tab.
+**Output:** `product/design-system/figma.json`
+
 ### 5. Application Shell (`/design-shell`)
 Design the persistent navigation and layout that wraps all sections.
 **Output:** `product/shell/spec.md`, `src/shell/components/`
@@ -55,7 +59,19 @@ Design the persistent navigation and layout that wraps all sections.
 - `/design-screen` — Create screen designs
 - `/screenshot-design` — Capture screenshots
 
-### 7. Export (`/export-product`)
+### 7. Tech Stack & Architecture (`/tech-stack`)
+Define the technology choices (frontend, backend, database, hosting, etc.) and architecture layers for your product.
+**Output:** `product/tech-stack/tech-stack.md`
+
+### 8. Cost Estimator & Optimizer (`/cost-estimator`)
+Estimate infrastructure and service costs at different usage tiers, and identify cost optimizations.
+**Output:** `product/cost-estimator/cost-estimate.md`
+
+### 9. QA Test Case Generator (`/qa-tests`)
+Generate comprehensive QA test cases covering all sections with priority levels and step-by-step instructions.
+**Output:** `product/qa-tests/qa-tests.md`
+
+### 10. Export (`/export-product`)
 Generate the complete export package with all components, types, and handoff documentation.
 **Output:** `product-plan/`
 
@@ -73,7 +89,17 @@ product/                           # Product definition (portable)
 │
 ├── design-system/                 # Design tokens
 │   ├── colors.json                # { primary, secondary, neutral }
-│   └── typography.json            # { heading, body, mono }
+│   ├── typography.json            # { heading, body, mono }
+│   └── figma.json                 # Figma integration { fileUrl, embedUrl, links }
+│
+├── tech-stack/                    # Tech stack & architecture
+│   └── tech-stack.md              # Technology choices and architecture layers
+│
+├── cost-estimator/                # Cost estimates
+│   └── cost-estimate.md           # Cost tiers and optimizations
+│
+├── qa-tests/                      # QA test cases
+│   └── qa-tests.md                # Test cases with priorities and steps
 │
 ├── shell/                         # Application shell
 │   └── spec.md                    # Shell specification
