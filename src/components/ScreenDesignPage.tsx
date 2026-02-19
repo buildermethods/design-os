@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Maximize2, GripVertical, Layout, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { loadScreenDesignComponent, sectionUsesShell } from '@/lib/section-loader'
+import { loadScreenDesignComponent, getSectionScreenDesigns } from '@/lib/section-loader'
 import { loadAppShell, hasShellComponents, loadShellInfo } from '@/lib/shell-loader'
 import { loadProductData } from '@/lib/product-loader'
 import React from 'react'
+import type { ComponentType } from 'react'
 
 const MIN_WIDTH = 320
 const DEFAULT_WIDTH_PERCENT = 100
@@ -187,114 +188,174 @@ export function ScreenDesignPage() {
   )
 }
 
+// ─── Navigation Mapping ───
+// Maps shell nav labels to section IDs so clicking nav items loads the right section.
+// The shell spec uses short labels (e.g. "Products") while section IDs use slugified
+// roadmap titles (e.g. "product-catalog"). This mapping bridges the two.
+
+interface NavRoute {
+  label: string
+  href: string
+  sectionId: string | null
+  screenDesignName: string | null
+}
+
 /**
- * Fullscreen version of a screen design (for screenshots)
- * Syncs theme with parent window via localStorage
- * Wraps screen design in AppShell if shell components exist
+ * Build the mapping from shell nav items → section IDs → first screen design.
+ * Uses shell spec navigation items and cross-references with available screen designs.
  */
-export function ScreenDesignFullscreen() {
-  const { sectionId, screenDesignName } = useParams<{ sectionId: string; screenDesignName: string }>()
+function buildNavRoutes(): NavRoute[] {
+  const shellInfo = loadShellInfo()
+  const productData = loadProductData()
+  const specNavItems = shellInfo?.spec?.navigationItems || []
+  const roadmapSections = productData.roadmap?.sections || []
 
-  // Load screen design component
-  const ScreenDesignComponent = useMemo(() => {
-    if (!sectionId || !screenDesignName) return null
-    const loader = loadScreenDesignComponent(sectionId, screenDesignName)
-    if (!loader) return null
-    // Wrap the loader to handle potential export issues
-    return React.lazy(async () => {
-      try {
-        const module = await loader()
-        if (module && typeof module.default === 'function') {
-          return module
-        }
-        console.error('Screen design does not have a valid default export:', screenDesignName)
-        return { default: () => <div>Invalid screen design: {screenDesignName}</div> }
-      } catch (e) {
-        console.error('Failed to load screen design:', screenDesignName, e)
-        return { default: () => <div>Failed to load: {screenDesignName}</div> }
-      }
+  // Parse nav items from spec (format: "**Label** → Section Title")
+  const parsedNavItems = specNavItems.length > 0
+    ? specNavItems
+        .map((item, index) => {
+          const labelMatch = item.match(/\*\*([^*]+)\*\*/)
+          const label = labelMatch ? labelMatch[1] : item.split('→')[0]?.trim() || `Item ${index + 1}`
+          // Extract the target section title after → (strip parenthetical notes)
+          const targetMatch = item.match(/→\s*(.+)$/)
+          const targetTitle = targetMatch?.[1]?.replace(/\s*\(.*\)\s*$/, '')?.trim() || ''
+          return { label, targetTitle, href: `/${label.toLowerCase().replace(/\s+/g, '-')}` }
+        })
+        .filter((item) => !item.href.includes('settings') && !item.href.includes('admin'))
+    : []
+
+  // Build routes by matching nav targets to roadmap section IDs
+  return parsedNavItems.map((navItem) => {
+    // Find matching section — every condition must compare against the section's title
+    const matchedSection = roadmapSections.find((s) => {
+      const sTitle = s.title.toLowerCase()
+      const target = navItem.targetTitle.toLowerCase()
+      const label = navItem.label.toLowerCase()
+      // Exact match on target title
+      if (target && sTitle === target) return true
+      // Section title starts with the nav label (e.g. "product catalog".startsWith("product"))
+      if (label && sTitle.startsWith(label)) return true
+      // Section title contains the nav label (e.g. "dashboard & reporting".includes("dashboard"))
+      if (label && sTitle.includes(label)) return true
+      return false
     })
-  }, [sectionId, screenDesignName])
 
-  // Load AppShell component if it exists AND this section uses the shell
-  const AppShellComponent = useMemo(() => {
-    // Check if this section should use the shell (based on spec.md config)
-    if (sectionId && !sectionUsesShell(sectionId)) {
-      console.log('[ScreenDesignFullscreen] Section configured to not use shell')
-      return null
+    if (!matchedSection) {
+      return { label: navItem.label, href: navItem.href, sectionId: null, screenDesignName: null }
     }
 
-    // Check if shell components exist
+    // Find the first available screen design for this section
+    const screenDesigns = getSectionScreenDesigns(matchedSection.id)
+    const firstDesign = screenDesigns[0]?.name || null
+
+    return {
+      label: navItem.label,
+      href: navItem.href,
+      sectionId: matchedSection.id,
+      screenDesignName: firstDesign,
+    }
+  })
+}
+
+/**
+ * Lazily load a screen design component by section ID and name
+ */
+function lazyLoadScreenDesign(sectionId: string, designName: string): React.LazyExoticComponent<ComponentType> {
+  return React.lazy(async () => {
+    const loader = loadScreenDesignComponent(sectionId, designName)
+    if (!loader) {
+      return { default: () => <div className="p-8 text-slate-500">Screen design not found: {designName}</div> }
+    }
+    try {
+      const module = await loader()
+      if (module && typeof module.default === 'function') {
+        return module
+      }
+      return { default: () => <div className="p-8 text-slate-500">Invalid screen design: {designName}</div> }
+    } catch (e) {
+      console.error('Failed to load screen design:', designName, e)
+      return { default: () => <div className="p-8 text-slate-500">Failed to load: {designName}</div> }
+    }
+  })
+}
+
+/**
+ * Fullscreen version of a screen design (for screenshots and interactive preview).
+ * Always wraps content in the AppShell with working navigation between sections.
+ * Syncs theme with parent window via localStorage.
+ */
+export function ScreenDesignFullscreen() {
+  const { sectionId: initialSectionId, screenDesignName: initialScreenDesignName } = useParams<{
+    sectionId: string
+    screenDesignName: string
+  }>()
+
+  // Active section + screen design state — starts from URL params
+  const [activeSectionId, setActiveSectionId] = useState(initialSectionId || '')
+  const [activeScreenDesign, setActiveScreenDesign] = useState(initialScreenDesignName || '')
+
+  // Build nav routes once
+  const navRoutes = useMemo(() => buildNavRoutes(), [])
+
+  // Find which nav route matches the active section
+  const activeNavHref = useMemo(() => {
+    const route = navRoutes.find((r) => r.sectionId === activeSectionId)
+    return route?.href || ''
+  }, [navRoutes, activeSectionId])
+
+  // Build navigation items with correct isActive state
+  const navigationItems = useMemo(
+    () =>
+      navRoutes.map((route) => ({
+        label: route.label,
+        href: route.href,
+        isActive: route.href === activeNavHref,
+      })),
+    [navRoutes, activeNavHref]
+  )
+
+  // Handle sidebar navigation
+  const handleNavigate = useCallback(
+    (href: string) => {
+      const route = navRoutes.find((r) => r.href === href)
+      if (route?.sectionId && route?.screenDesignName) {
+        setActiveSectionId(route.sectionId)
+        setActiveScreenDesign(route.screenDesignName)
+      }
+    },
+    [navRoutes]
+  )
+
+  // Lazily load the active screen design component
+  const ActiveScreenDesign = useMemo(() => {
+    if (!activeSectionId || !activeScreenDesign) return null
+    return lazyLoadScreenDesign(activeSectionId, activeScreenDesign)
+  }, [activeSectionId, activeScreenDesign])
+
+  // Load AppShell component (always, for cross-section nav)
+  const AppShellComponent = useMemo(() => {
     const shellExists = hasShellComponents()
-    console.log('[ScreenDesignFullscreen] Shell exists:', shellExists)
     if (!shellExists) return null
 
     const loader = loadAppShell()
-    console.log('[ScreenDesignFullscreen] AppShell loader:', loader)
-    if (!loader) {
-      console.warn('[ScreenDesignFullscreen] hasShellComponents() returned true but loadAppShell() returned null')
-      return null
-    }
+    if (!loader) return null
 
-    // Wrap the loader to provide default props to the shell
     return React.lazy(async () => {
       try {
-        const module = await loader() as Record<string, unknown>
+        const module = (await loader()) as Record<string, unknown>
         const ShellComponent = (module?.default || module?.AppShell) as React.ComponentType<Record<string, unknown>>
 
         if (typeof ShellComponent !== 'function') {
-          console.warn('[ScreenDesignFullscreen] AppShell does not have a valid export')
           return { default: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
         }
 
-        // Create a wrapper that provides default props to the shell
-        const ShellWrapper = ({ children }: { children?: React.ReactNode }) => {
-          // Try to get navigation items from shell spec
-          const shellInfo = loadShellInfo()
-          const specNavItems = shellInfo?.spec?.navigationItems || []
-
-          // Parse navigation items from spec (format: "**Label** → Description")
-          const navigationItems = specNavItems.length > 0
-            ? specNavItems.map((item, index) => {
-                // Extract label from **Label** format
-                const labelMatch = item.match(/\*\*([^*]+)\*\*/)
-                const label = labelMatch ? labelMatch[1] : item.split('→')[0]?.trim() || `Item ${index + 1}`
-                return {
-                  label,
-                  href: `/${label.toLowerCase().replace(/\s+/g, '-')}`,
-                  isActive: index === 0,
-                }
-              })
-            : [
-                { label: 'Dashboard', href: '/', isActive: true },
-                { label: 'Items', href: '/items' },
-                { label: 'Settings', href: '/settings' },
-              ]
-
-          const defaultUser = {
-            name: 'Demo User',
-          }
-
-          // Pass props dynamically - the shell component decides what it needs
-          return (
-            <ShellComponent
-              navigationItems={navigationItems}
-              user={defaultUser}
-              onNavigate={() => {}}
-              onLogout={() => {}}
-            >
-              {children}
-            </ShellComponent>
-          )
-        }
-
-        return { default: ShellWrapper }
+        return { default: ShellComponent as ComponentType<Record<string, unknown>> }
       } catch (e) {
         console.error('[ScreenDesignFullscreen] Failed to load AppShell:', e)
         return { default: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
       }
     })
-  }, [sectionId]) // Depends on sectionId to check section-specific shell config
+  }, [])
 
   // Sync theme with parent window
   useEffect(() => {
@@ -310,18 +371,12 @@ export function ScreenDesignFullscreen() {
       }
     }
 
-    // Apply on mount
     applyTheme()
 
-    // Listen for storage changes (from parent window)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'theme') {
-        applyTheme()
-      }
+      if (e.key === 'theme') applyTheme()
     }
     window.addEventListener('storage', handleStorageChange)
-
-    // Also poll for changes since storage event doesn't fire in same window
     const interval = setInterval(applyTheme, 100)
 
     return () => {
@@ -330,7 +385,7 @@ export function ScreenDesignFullscreen() {
     }
   }, [])
 
-  if (!ScreenDesignComponent) {
+  if (!ActiveScreenDesign) {
     return (
       <div className="h-screen flex items-center justify-center bg-background">
         <p className="text-stone-600 dark:text-stone-400">Screen design not found.</p>
@@ -338,7 +393,19 @@ export function ScreenDesignFullscreen() {
     )
   }
 
-  // If shell exists, wrap screen design in AppShell
+  const content = (
+    <Suspense
+      fallback={
+        <div className="h-full flex items-center justify-center">
+          <div className="text-stone-500 dark:text-stone-400">Loading...</div>
+        </div>
+      }
+    >
+      <ActiveScreenDesign />
+    </Suspense>
+  )
+
+  // Wrap in shell if available
   if (AppShellComponent) {
     return (
       <Suspense
@@ -348,14 +415,22 @@ export function ScreenDesignFullscreen() {
           </div>
         }
       >
-        <AppShellComponent>
-          <ScreenDesignComponent />
+        <AppShellComponent
+          navigationItems={navigationItems}
+          user={{ name: 'Demo User' }}
+          productName="Centric PLM"
+          productIcon="C"
+          onNavigate={handleNavigate}
+          onLogout={() => {}}
+          onSettings={() => {}}
+        >
+          {content}
         </AppShellComponent>
       </Suspense>
     )
   }
 
-  // No shell, render screen design directly
+  // No shell, render directly
   return (
     <Suspense
       fallback={
@@ -364,7 +439,7 @@ export function ScreenDesignFullscreen() {
         </div>
       }
     >
-      <ScreenDesignComponent />
+      <ActiveScreenDesign />
     </Suspense>
   )
 }

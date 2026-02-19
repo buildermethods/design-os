@@ -48,12 +48,27 @@ export function parseShellSpec(md: string): ShellSpec | null {
     const overviewMatch = md.match(/## Overview\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const overview = overviewMatch?.[1]?.trim() || ''
 
-    // Extract navigation items
-    const navSection = md.match(/## Navigation Structure\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    // Extract navigation items — only from the Sidebar subsection, not Top Bar
+    // Stop at #### (Sidebar Footer) or ### (Top Bar) or ## (next top-level section)
+    const sidebarSection = md.match(/### Sidebar[^\n]*\n+([\s\S]*?)(?=\n#### |\n### |\n## |\n#[^#]|$)/)
+    const sidebarFooter = md.match(/#### Sidebar Footer[^\n]*\n+([\s\S]*?)(?=\n#### |\n### |\n## |\n#[^#]|$)/)
     const navigationItems: string[] = []
 
-    if (navSection?.[1]) {
-      const lines = navSection[1].split('\n')
+    // Parse sidebar primary nav items
+    if (sidebarSection?.[1]) {
+      const lines = sidebarSection[1].split('\n')
+      for (const line of lines) {
+        const trimmed = line.trim()
+        // Only grab top-level bullet items (not sub-sections like "#### Sidebar Footer")
+        if (trimmed.startsWith('- ') && !trimmed.startsWith('- **Left:') && !trimmed.startsWith('- **Center:') && !trimmed.startsWith('- **Right:')) {
+          navigationItems.push(trimmed.slice(2).trim())
+        }
+      }
+    }
+
+    // Parse sidebar footer items (e.g. Settings)
+    if (sidebarFooter?.[1]) {
+      const lines = sidebarFooter[1].split('\n')
       for (const line of lines) {
         const trimmed = line.trim()
         if (trimmed.startsWith('- ')) {

@@ -1,0 +1,691 @@
+{
+  "_meta": {
+    "models": {
+      "BillOfMaterials": "A hierarchical breakdown of materials, components, and packaging required to manufacture a specific product or style. BOMs have types (Design, Manufacturing, Sourcing) and configurable subtypes.",
+      "BomLineItem": "A single entry in a BOM representing a material, component, sub-assembly, or packaging element. Line items are hierarchical — they can contain child line items to represent nested sub-assemblies.",
+      "BomVersion": "A historical snapshot of a BOM at a point in time, capturing the full line item tree, costs, and metadata. Used for version comparison and audit trails.",
+      "CostBreakdown": "The detailed cost structure for a BOM or line item, including material cost, labor, overhead, shipping, and duties. Supports multiple cost scenarios (best/worst/expected).",
+      "ApprovalStep": "A single step in an approval workflow for a BOM. Each step has an assignee, status, and optional comments. Steps can be sequential or parallel.",
+      "BomType": "A configurable classification for BOMs. Core types (Design, Manufacturing, Sourcing) ship as defaults; tenants can modify or add custom types and subtypes.",
+      "Material": "A raw material, component, or sub-assembly available in the material library. Materials have suppliers, costs, specifications, and can be added to any BOM as line items."
+    },
+    "relationships": [
+      "BillOfMaterials belongs to a Product or Style",
+      "BillOfMaterials has many BomLineItem (hierarchical tree)",
+      "BomLineItem can have many child BomLineItem (sub-assemblies)",
+      "BomLineItem references a Material from the material library",
+      "BomLineItem can have multiple supplier cost options",
+      "BillOfMaterials has many BomVersion (version history)",
+      "BillOfMaterials has many ApprovalStep (approval workflow)",
+      "BillOfMaterials has one CostBreakdown (rollup)",
+      "BomLineItem has one CostBreakdown (per-item)",
+      "Material has many Supplier (via supplierCosts)"
+    ]
+  },
+
+  "bomTypes": [
+    {
+      "id": "type-design",
+      "name": "Design",
+      "description": "Initial material selection and cost estimation during the design phase",
+      "isCore": true,
+      "subtypes": ["Concept", "Development", "Final"]
+    },
+    {
+      "id": "type-manufacturing",
+      "name": "Manufacturing",
+      "description": "Production-ready BOM with confirmed materials, quantities, and supplier allocations",
+      "isCore": true,
+      "subtypes": ["Pre-Production", "Production", "Pilot Run"]
+    },
+    {
+      "id": "type-sourcing",
+      "name": "Sourcing",
+      "description": "BOM focused on material procurement, supplier quotes, and cost comparison",
+      "isCore": true,
+      "subtypes": ["RFQ", "Awarded", "Confirmed"]
+    },
+    {
+      "id": "type-assortment",
+      "name": "Assortment",
+      "description": "Aggregated BOM across multiple styles for assortment-level cost planning",
+      "isCore": false,
+      "subtypes": []
+    }
+  ],
+
+  "materials": [
+    {
+      "id": "mat-001",
+      "name": "Cotton Jersey 180gsm",
+      "code": "MAT-CJ180",
+      "category": "Fabric",
+      "unit": "meters",
+      "defaultUnitCost": 4.25,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-001", "supplierName": "Sunrise Textiles", "unitCost": 4.25, "moq": 500, "leadTimeDays": 21 },
+        { "supplierId": "sup-002", "supplierName": "Pacific Weaving Co.", "unitCost": 3.90, "moq": 1000, "leadTimeDays": 28 }
+      ],
+      "specifications": { "weight": "180gsm", "width": "150cm", "composition": "100% Organic Cotton", "certification": "GOTS" }
+    },
+    {
+      "id": "mat-002",
+      "name": "Recycled Polyester Lining",
+      "code": "MAT-RPL60",
+      "category": "Fabric",
+      "unit": "meters",
+      "defaultUnitCost": 2.80,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-003", "supplierName": "EcoFiber Mills", "unitCost": 2.80, "moq": 300, "leadTimeDays": 14 }
+      ],
+      "specifications": { "weight": "60gsm", "width": "140cm", "composition": "100% Recycled Polyester", "certification": "GRS" }
+    },
+    {
+      "id": "mat-003",
+      "name": "YKK Metal Zipper #5",
+      "code": "MAT-YKK5M",
+      "category": "Trims",
+      "unit": "pieces",
+      "defaultUnitCost": 0.85,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-004", "supplierName": "YKK Corporation", "unitCost": 0.85, "moq": 5000, "leadTimeDays": 10 }
+      ],
+      "specifications": { "size": "#5", "material": "Brass", "finish": "Antique Nickel" }
+    },
+    {
+      "id": "mat-004",
+      "name": "Corozo Buttons 18mm",
+      "code": "IG-CRZ18",
+      "category": "Trims",
+      "unit": "pieces",
+      "defaultUnitCost": 0.22,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-005", "supplierName": "Natural Button Co.", "unitCost": 0.22, "moq": 2000, "leadTimeDays": 18 },
+        { "supplierId": "sup-006", "supplierName": "Butto Italia", "unitCost": 0.28, "moq": 500, "leadTimeDays": 12 }
+      ],
+      "specifications": { "diameter": "18mm", "material": "Corozo (Tagua Nut)", "holes": 4 }
+    },
+    {
+      "id": "mat-005",
+      "name": "Woven Care Label",
+      "code": "MAT-WCL01",
+      "category": "Labels & Packaging",
+      "unit": "pieces",
+      "defaultUnitCost": 0.06,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-007", "supplierName": "SinoLabel Group", "unitCost": 0.06, "moq": 10000, "leadTimeDays": 7 }
+      ],
+      "specifications": { "width": "25mm", "material": "Satin Polyester", "print": "4-color" }
+    },
+    {
+      "id": "mat-006",
+      "name": "Hang Tag — Premium Kraft",
+      "code": "MAT-HTK01",
+      "category": "Labels & Packaging",
+      "unit": "pieces",
+      "defaultUnitCost": 0.12,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-007", "supplierName": "SinoLabel Group", "unitCost": 0.12, "moq": 5000, "leadTimeDays": 10 }
+      ],
+      "specifications": { "size": "50x90mm", "material": "350gsm Kraft", "finish": "Matte Lamination" }
+    },
+    {
+      "id": "mat-007",
+      "name": "Polybag — Biodegradable",
+      "code": "MAT-PBG01",
+      "category": "Labels & Packaging",
+      "unit": "pieces",
+      "defaultUnitCost": 0.08,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-008", "supplierName": "GreenPack Solutions", "unitCost": 0.08, "moq": 5000, "leadTimeDays": 14 }
+      ],
+      "specifications": { "size": "30x40cm", "material": "PLA Cornstarch", "thickness": "40 micron" }
+    },
+    {
+      "id": "mat-008",
+      "name": "Elastic Waistband 30mm",
+      "code": "MAT-EWB30",
+      "category": "Trims",
+      "unit": "meters",
+      "defaultUnitCost": 0.45,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-001", "supplierName": "Sunrise Textiles", "unitCost": 0.45, "moq": 1000, "leadTimeDays": 14 }
+      ],
+      "specifications": { "width": "30mm", "composition": "70% Polyester, 30% Rubber", "color": "White" }
+    },
+    {
+      "id": "mat-009",
+      "name": "Thread — Corespun Poly/Cotton",
+      "code": "MAT-TCP40",
+      "category": "Thread",
+      "unit": "cones",
+      "defaultUnitCost": 1.50,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-009", "supplierName": "Coats Group", "unitCost": 1.50, "moq": 100, "leadTimeDays": 7 }
+      ],
+      "specifications": { "ticket": "40", "composition": "Poly/Cotton Core", "meterage": "5000m/cone" }
+    },
+    {
+      "id": "mat-010",
+      "name": "Shipping Carton — Standard",
+      "code": "MAT-SCB01",
+      "category": "Packaging",
+      "unit": "pieces",
+      "defaultUnitCost": 1.20,
+      "currency": "USD",
+      "supplierCosts": [
+        { "supplierId": "sup-008", "supplierName": "GreenPack Solutions", "unitCost": 1.20, "moq": 200, "leadTimeDays": 10 }
+      ],
+      "specifications": { "dimensions": "60x40x30cm", "material": "Double-wall Corrugated", "printedBranding": false }
+    }
+  ],
+
+  "billsOfMaterials": [
+    {
+      "id": "bom-001",
+      "name": "Urban Relaxed Tee — Design BOM",
+      "productId": "prod-001",
+      "productName": "Urban Relaxed Tee",
+      "productCode": "URT-2026",
+      "styleId": null,
+      "styleName": null,
+      "bomTypeId": "type-design",
+      "bomTypeName": "Design",
+      "subtype": "Development",
+      "status": "In Review",
+      "version": 3,
+      "totalCost": 8.42,
+      "currency": "USD",
+      "lineItemCount": 8,
+      "createdBy": "Mika Patel",
+      "modifiedBy": "Jordan Liu",
+      "createdAt": "2026-01-10T09:00:00Z",
+      "modifiedAt": "2026-02-14T16:30:00Z",
+      "assignedTo": "Jordan Liu",
+      "seasonId": "season-001",
+      "seasonName": "SS26 — Spring/Summer 2026",
+      "description": "Development-phase BOM for the Urban Relaxed Tee. Core fabric selected, trim options under review.",
+      "costBreakdown": {
+        "materialCost": 6.18,
+        "laborCost": 1.20,
+        "overheadCost": 0.45,
+        "shippingCost": 0.35,
+        "dutiesCost": 0.24,
+        "totalCost": 8.42
+      }
+    },
+    {
+      "id": "bom-002",
+      "name": "Urban Relaxed Tee — Manufacturing BOM",
+      "productId": "prod-001",
+      "productName": "Urban Relaxed Tee",
+      "productCode": "URT-2026",
+      "styleId": null,
+      "styleName": null,
+      "bomTypeId": "type-manufacturing",
+      "bomTypeName": "Manufacturing",
+      "subtype": "Pre-Production",
+      "status": "Draft",
+      "version": 1,
+      "totalCost": 9.15,
+      "currency": "USD",
+      "lineItemCount": 10,
+      "createdBy": "Jordan Liu",
+      "modifiedBy": "Jordan Liu",
+      "createdAt": "2026-02-01T10:00:00Z",
+      "modifiedAt": "2026-02-12T14:20:00Z",
+      "assignedTo": "Jordan Liu",
+      "seasonId": "season-001",
+      "seasonName": "SS26 — Spring/Summer 2026",
+      "description": "Pre-production BOM derived from the approved design BOM. Includes confirmed suppliers and production-grade material specifications.",
+      "costBreakdown": {
+        "materialCost": 6.55,
+        "laborCost": 1.35,
+        "overheadCost": 0.50,
+        "shippingCost": 0.42,
+        "dutiesCost": 0.33,
+        "totalCost": 9.15
+      }
+    },
+    {
+      "id": "bom-003",
+      "name": "Heritage Wool Blazer — Design BOM",
+      "productId": "prod-003",
+      "productName": "Heritage Wool Blazer",
+      "productCode": "HWB-2026",
+      "styleId": null,
+      "styleName": null,
+      "bomTypeId": "type-design",
+      "bomTypeName": "Design",
+      "subtype": "Final",
+      "status": "Approved",
+      "version": 5,
+      "totalCost": 42.80,
+      "currency": "USD",
+      "lineItemCount": 18,
+      "createdBy": "Arjun Mehta",
+      "modifiedBy": "Priya Nakamura",
+      "createdAt": "2025-11-15T08:00:00Z",
+      "modifiedAt": "2026-01-28T11:45:00Z",
+      "assignedTo": "Priya Nakamura",
+      "seasonId": "season-002",
+      "seasonName": "FW26 — Fall/Winter 2026",
+      "description": "Final approved design BOM for the Heritage Wool Blazer. All materials confirmed, costing locked for FW26 collection planning. Includes premium lining and custom hardware.",
+      "costBreakdown": {
+        "materialCost": 31.20,
+        "laborCost": 6.50,
+        "overheadCost": 2.10,
+        "shippingCost": 1.80,
+        "dutiesCost": 1.20,
+        "totalCost": 42.80
+      }
+    },
+    {
+      "id": "bom-004",
+      "name": "Performance Running Short — Sourcing BOM",
+      "productId": "prod-005",
+      "productName": "Performance Running Short",
+      "productCode": "PRS-2026",
+      "styleId": "style-009",
+      "styleName": "Midnight Black",
+      "bomTypeId": "type-sourcing",
+      "bomTypeName": "Sourcing",
+      "subtype": "RFQ",
+      "status": "In Review",
+      "version": 2,
+      "totalCost": 11.60,
+      "currency": "USD",
+      "lineItemCount": 7,
+      "createdBy": "Sam Torres",
+      "modifiedBy": "Sam Torres",
+      "createdAt": "2026-02-05T13:00:00Z",
+      "modifiedAt": "2026-02-18T09:15:00Z",
+      "assignedTo": "Elena Rossi",
+      "seasonId": "season-001",
+      "seasonName": "SS26 — Spring/Summer 2026",
+      "description": "Sourcing BOM for RFQ — comparing supplier quotes for performance fabrics and reflective trims across three factories.",
+      "costBreakdown": {
+        "materialCost": 8.40,
+        "laborCost": 1.80,
+        "overheadCost": 0.55,
+        "shippingCost": 0.50,
+        "dutiesCost": 0.35,
+        "totalCost": 11.60
+      }
+    },
+    {
+      "id": "bom-005",
+      "name": "Casual Weekend Chino — Design BOM",
+      "productId": "prod-002",
+      "productName": "Casual Weekend Chino",
+      "productCode": "CWC-2026",
+      "styleId": null,
+      "styleName": null,
+      "bomTypeId": "type-design",
+      "bomTypeName": "Design",
+      "subtype": "Concept",
+      "status": "Draft",
+      "version": 1,
+      "totalCost": 0,
+      "currency": "USD",
+      "lineItemCount": 0,
+      "createdBy": "Mika Patel",
+      "modifiedBy": "Mika Patel",
+      "createdAt": "2026-02-18T10:00:00Z",
+      "modifiedAt": "2026-02-18T10:00:00Z",
+      "assignedTo": "Mika Patel",
+      "seasonId": "season-001",
+      "seasonName": "SS26 — Spring/Summer 2026",
+      "description": "",
+      "costBreakdown": {
+        "materialCost": 0,
+        "laborCost": 0,
+        "overheadCost": 0,
+        "shippingCost": 0,
+        "dutiesCost": 0,
+        "totalCost": 0
+      }
+    },
+    {
+      "id": "bom-006",
+      "name": "Heritage Wool Blazer — Manufacturing BOM",
+      "productId": "prod-003",
+      "productName": "Heritage Wool Blazer",
+      "productCode": "HWB-2026",
+      "styleId": null,
+      "styleName": null,
+      "bomTypeId": "type-manufacturing",
+      "bomTypeName": "Manufacturing",
+      "subtype": "Production",
+      "status": "Approved",
+      "version": 2,
+      "totalCost": 45.30,
+      "currency": "USD",
+      "lineItemCount": 22,
+      "createdBy": "Jordan Liu",
+      "modifiedBy": "Priya Nakamura",
+      "createdAt": "2026-01-30T09:00:00Z",
+      "modifiedAt": "2026-02-15T17:00:00Z",
+      "assignedTo": "Jordan Liu",
+      "seasonId": "season-002",
+      "seasonName": "FW26 — Fall/Winter 2026",
+      "description": "Production-confirmed manufacturing BOM with final supplier allocations and packaging specs. Ready for PO generation.",
+      "costBreakdown": {
+        "materialCost": 32.80,
+        "laborCost": 7.00,
+        "overheadCost": 2.30,
+        "shippingCost": 1.90,
+        "dutiesCost": 1.30,
+        "totalCost": 45.30
+      }
+    }
+  ],
+
+  "bomLineItems": {
+    "bom-001": [
+      {
+        "id": "li-001",
+        "bomId": "bom-001",
+        "parentLineItemId": null,
+        "materialId": "mat-001",
+        "materialName": "Cotton Jersey 180gsm",
+        "materialCode": "MAT-CJ180",
+        "category": "Fabric",
+        "quantity": 0.85,
+        "unit": "meters",
+        "unitCost": 4.25,
+        "totalCost": 3.61,
+        "activeSupplierId": "sup-001",
+        "activeSupplierName": "Sunrise Textiles",
+        "wastagePercent": 5,
+        "notes": "Main body fabric. GOTS certified organic cotton.",
+        "sortOrder": 1,
+        "children": []
+      },
+      {
+        "id": "li-002",
+        "bomId": "bom-001",
+        "parentLineItemId": null,
+        "materialId": "mat-009",
+        "materialName": "Thread — Corespun Poly/Cotton",
+        "materialCode": "MAT-TCP40",
+        "category": "Thread",
+        "quantity": 0.02,
+        "unit": "cones",
+        "unitCost": 1.50,
+        "totalCost": 0.03,
+        "activeSupplierId": "sup-009",
+        "activeSupplierName": "Coats Group",
+        "wastagePercent": 0,
+        "notes": "Ticket 40 for all seams. Color-matched to fabric.",
+        "sortOrder": 2,
+        "children": []
+      },
+      {
+        "id": "li-003",
+        "bomId": "bom-001",
+        "parentLineItemId": null,
+        "materialId": null,
+        "materialName": "Trim Package",
+        "materialCode": null,
+        "category": "Sub-Assembly",
+        "quantity": 1,
+        "unit": "set",
+        "unitCost": 0.40,
+        "totalCost": 0.40,
+        "activeSupplierId": null,
+        "activeSupplierName": null,
+        "wastagePercent": 0,
+        "notes": "Grouped trims for the tee — care label and hang tag.",
+        "sortOrder": 3,
+        "children": [
+          {
+            "id": "li-003a",
+            "bomId": "bom-001",
+            "parentLineItemId": "li-003",
+            "materialId": "mat-005",
+            "materialName": "Woven Care Label",
+            "materialCode": "MAT-WCL01",
+            "category": "Labels & Packaging",
+            "quantity": 1,
+            "unit": "pieces",
+            "unitCost": 0.06,
+            "totalCost": 0.06,
+            "activeSupplierId": "sup-007",
+            "activeSupplierName": "SinoLabel Group",
+            "wastagePercent": 0,
+            "notes": "",
+            "sortOrder": 1,
+            "children": []
+          },
+          {
+            "id": "li-003b",
+            "bomId": "bom-001",
+            "parentLineItemId": "li-003",
+            "materialId": "mat-006",
+            "materialName": "Hang Tag — Premium Kraft",
+            "materialCode": "MAT-HTK01",
+            "category": "Labels & Packaging",
+            "quantity": 1,
+            "unit": "pieces",
+            "unitCost": 0.12,
+            "totalCost": 0.12,
+            "activeSupplierId": "sup-007",
+            "activeSupplierName": "SinoLabel Group",
+            "wastagePercent": 0,
+            "notes": "Kraft swing tag with cotton string attachment.",
+            "sortOrder": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "li-004",
+        "bomId": "bom-001",
+        "parentLineItemId": null,
+        "materialId": null,
+        "materialName": "Packaging",
+        "materialCode": null,
+        "category": "Sub-Assembly",
+        "quantity": 1,
+        "unit": "set",
+        "unitCost": 1.28,
+        "totalCost": 1.28,
+        "activeSupplierId": null,
+        "activeSupplierName": null,
+        "wastagePercent": 0,
+        "notes": "Individual garment packaging.",
+        "sortOrder": 4,
+        "children": [
+          {
+            "id": "li-004a",
+            "bomId": "bom-001",
+            "parentLineItemId": "li-004",
+            "materialId": "mat-007",
+            "materialName": "Polybag — Biodegradable",
+            "materialCode": "MAT-PBG01",
+            "category": "Labels & Packaging",
+            "quantity": 1,
+            "unit": "pieces",
+            "unitCost": 0.08,
+            "totalCost": 0.08,
+            "activeSupplierId": "sup-008",
+            "activeSupplierName": "GreenPack Solutions",
+            "wastagePercent": 0,
+            "notes": "Biodegradable PLA bag for individual garment.",
+            "sortOrder": 1,
+            "children": []
+          },
+          {
+            "id": "li-004b",
+            "bomId": "bom-001",
+            "parentLineItemId": "li-004",
+            "materialId": "mat-010",
+            "materialName": "Shipping Carton — Standard",
+            "materialCode": "MAT-SCB01",
+            "category": "Packaging",
+            "quantity": 0.05,
+            "unit": "pieces",
+            "unitCost": 1.20,
+            "totalCost": 0.06,
+            "activeSupplierId": "sup-008",
+            "activeSupplierName": "GreenPack Solutions",
+            "wastagePercent": 0,
+            "notes": "Shared carton — 20 units per carton. Cost allocated per unit.",
+            "sortOrder": 2,
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+
+  "bomVersions": [
+    {
+      "id": "ver-001",
+      "bomId": "bom-001",
+      "version": 1,
+      "status": "Draft",
+      "totalCost": 7.90,
+      "lineItemCount": 6,
+      "createdBy": "Mika Patel",
+      "createdAt": "2026-01-10T09:00:00Z",
+      "changeDescription": "Initial design BOM created with core fabric and basic trims."
+    },
+    {
+      "id": "ver-002",
+      "bomId": "bom-001",
+      "version": 2,
+      "status": "Draft",
+      "totalCost": 8.10,
+      "lineItemCount": 7,
+      "createdBy": "Jordan Liu",
+      "createdAt": "2026-01-25T14:30:00Z",
+      "changeDescription": "Added biodegradable polybag packaging. Updated thread specification to Coats Group supplier."
+    },
+    {
+      "id": "ver-003",
+      "bomId": "bom-001",
+      "version": 3,
+      "status": "In Review",
+      "totalCost": 8.42,
+      "lineItemCount": 8,
+      "createdBy": "Jordan Liu",
+      "createdAt": "2026-02-14T16:30:00Z",
+      "changeDescription": "Added shipping carton allocation. Updated cotton jersey wastage from 3% to 5% per factory feedback. Submitted for review."
+    },
+    {
+      "id": "ver-004",
+      "bomId": "bom-003",
+      "version": 5,
+      "status": "Approved",
+      "totalCost": 42.80,
+      "lineItemCount": 18,
+      "createdBy": "Priya Nakamura",
+      "createdAt": "2026-01-28T11:45:00Z",
+      "changeDescription": "Final approval. Lining supplier confirmed as EcoFiber Mills. All hardware switched to antique nickel finish per design director sign-off."
+    }
+  ],
+
+  "approvalSteps": [
+    {
+      "id": "appr-001",
+      "bomId": "bom-001",
+      "stepOrder": 1,
+      "role": "Design Lead",
+      "assigneeId": "user-003",
+      "assigneeName": "Jordan Liu",
+      "status": "Approved",
+      "comment": "Materials look good. Cotton quality confirmed with sample swatch.",
+      "decidedAt": "2026-02-15T10:00:00Z"
+    },
+    {
+      "id": "appr-002",
+      "bomId": "bom-001",
+      "stepOrder": 2,
+      "role": "Cost Engineer",
+      "assigneeId": "user-005",
+      "assigneeName": "Elena Rossi",
+      "status": "Pending",
+      "comment": null,
+      "decidedAt": null
+    },
+    {
+      "id": "appr-003",
+      "bomId": "bom-001",
+      "stepOrder": 3,
+      "role": "Sourcing Manager",
+      "assigneeId": "user-006",
+      "assigneeName": "Sam Torres",
+      "status": "Pending",
+      "comment": null,
+      "decidedAt": null
+    },
+    {
+      "id": "appr-004",
+      "bomId": "bom-003",
+      "stepOrder": 1,
+      "role": "Design Lead",
+      "assigneeId": "user-003",
+      "assigneeName": "Arjun Mehta",
+      "status": "Approved",
+      "comment": "Premium materials confirmed. Wool sourcing locked.",
+      "decidedAt": "2026-01-20T09:30:00Z"
+    },
+    {
+      "id": "appr-005",
+      "bomId": "bom-003",
+      "stepOrder": 2,
+      "role": "Cost Engineer",
+      "assigneeId": "user-005",
+      "assigneeName": "Elena Rossi",
+      "status": "Approved",
+      "comment": "Landed cost within target margin. No concerns.",
+      "decidedAt": "2026-01-24T14:15:00Z"
+    },
+    {
+      "id": "appr-006",
+      "bomId": "bom-003",
+      "stepOrder": 3,
+      "role": "VP Product",
+      "assigneeId": "user-007",
+      "assigneeName": "Priya Nakamura",
+      "status": "Approved",
+      "comment": "Approved for FW26. Great work on the sustainable lining selection.",
+      "decidedAt": "2026-01-28T11:45:00Z"
+    }
+  ],
+
+  "filterOptions": {
+    "bomTypes": ["Design", "Manufacturing", "Sourcing", "Assortment"],
+    "subtypes": ["Concept", "Development", "Final", "Pre-Production", "Production", "Pilot Run", "RFQ", "Awarded", "Confirmed"],
+    "statuses": ["Draft", "In Review", "Approved", "Locked", "Archived"],
+    "seasons": ["SS26 — Spring/Summer 2026", "FW26 — Fall/Winter 2026"],
+    "materialCategories": ["Fabric", "Trims", "Thread", "Labels & Packaging", "Packaging", "Hardware", "Sub-Assembly"]
+  },
+
+  "tableColumns": [
+    { "key": "name", "label": "BOM Name", "sortable": true, "filterable": false, "visible": true, "width": 240 },
+    { "key": "productName", "label": "Product", "sortable": true, "filterable": true, "visible": true, "width": 160 },
+    { "key": "bomTypeName", "label": "Type", "sortable": true, "filterable": true, "visible": true, "width": 120 },
+    { "key": "subtype", "label": "Subtype", "sortable": true, "filterable": true, "visible": true, "width": 120 },
+    { "key": "status", "label": "Status", "sortable": true, "filterable": true, "visible": true, "width": 110 },
+    { "key": "version", "label": "Version", "sortable": true, "filterable": false, "visible": true, "width": 80 },
+    { "key": "totalCost", "label": "Total Cost", "sortable": true, "filterable": false, "visible": true, "width": 110 },
+    { "key": "lineItemCount", "label": "Items", "sortable": true, "filterable": false, "visible": true, "width": 70 },
+    { "key": "assignedTo", "label": "Assigned To", "sortable": true, "filterable": true, "visible": true, "width": 140 },
+    { "key": "seasonName", "label": "Season", "sortable": true, "filterable": true, "visible": true, "width": 180 },
+    { "key": "modifiedAt", "label": "Last Modified", "sortable": true, "filterable": false, "visible": true, "width": 140 },
+    { "key": "modifiedBy", "label": "Modified By", "sortable": true, "filterable": false, "visible": false, "width": 130 },
+    { "key": "createdAt", "label": "Created", "sortable": true, "filterable": false, "visible": false, "width": 140 }
+  ]
+}
