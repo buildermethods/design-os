@@ -1,0 +1,156 @@
+{
+  "meta": {
+    "project": "Cadence Sales OS",
+    "date": "2026-01-21",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "Cadence is a Sales Operating System designed specifically for Indian educator and coaching businesses. It streamlines lead management into a predictable and efficient conversion process by combining software with standard operating procedures and hands-on implementation. It addresses common pain points such as missed follow-ups, inefficient lead prioritization, lack of visibility for founders, inconsistency in BD workflows, and insufficient clarity on lead conversion failures.",
+  "core_goals": [
+    "Automate follow-up scheduling, reminders, and accountability to ensure no lead slips through the cracks.",
+    "Prioritize leads with scoring to maximize BD efficiency and focus on high-intent leads daily.",
+    "Provide founders with a daily dashboard offering comprehensive visibility on calls, connects, hot leads, conversions, and expected revenue.",
+    "Embed a sales process into the tool so all BDs follow consistent scripts, stages, and drop reasons.",
+    "Enable data-driven insights by tracking drop reasons at every stage of the conversion funnel."
+  ],
+  "key_features": [
+    "Foundation setup including design tokens (colors and typography), core data model TypeScript interfaces, routing structure, and a reusable application shell with responsive navigation.",
+    "Today feature serving as BD's command center that displays a prioritized queue of follow-ups due and new leads, daily progress stats, and an integrated outcome logging form with conditional logic.",
+    "Leads section providing a searchable and filterable database of all leads with a detailed data table, multi-select bulk actions, side panel lead details, timeline of interactions, and an extended outcome form.",
+    "Dashboard delivering funnel metrics (calls made, connected, hot leads, conversions, lost leads) with date and filter controls, role-based access to founder-level filters, and drop reason analytic charts with drill-down capabilities.",
+    "Settings area for admin users to configure pipelines, stages, drop reasons, and team management with access control, validation rules, and management workflows."
+  ],
+  "user_flow_summary": [
+    "Foundation flow: User accesses the app and interacts with a responsive sidebar navigation including Today, Leads, Dashboard, and Settings pages, with the user menu showing profile and logout options.",
+    "Today flow: BD lands on the Today page, views daily stats and a tabbed list of follow-ups due or new leads, selects a lead to see details in a side panel, initiates a call via phone dialer, logs the call outcome via a smart form, and automatically advances to the next lead upon successful logging.",
+    "Leads flow: BD or admin searches, filters, and selects leads from a data table, viewing detailed lead info and history in a side panel or bottom sheet on mobile, with bulk actions like assignment, qualification, and export available for multiple selected leads.",
+    "Dashboard flow: Founder or admin selects date ranges and filters to view funnel metrics and drop reason breakdowns, clicks on metrics or chart segments to drill down into filtered lead lists, gaining actionable insights.",
+    "Settings flow: Admin accesses settings tabs to manage pipelines, stages, drop reasons, and team members, performing CRUD operations with validations, and BD users receive an access restricted view if unauthorized."
+  ],
+  "validation_criteria": [
+    "All UI components are integrated without redesign and maintain original styling and responsiveness.",
+    "Data model TypeScript interfaces match provided definitions and support all core entities and relationships.",
+    "Routing is correctly established for all main sections with placeholder or real pages.",
+    "Application shell navigation correctly links to respective routes and displays active states.",
+    "User menu accurately reflects user info and supports logout functionality.",
+    "Today page correctly displays stats, two tabs of leads, and side panel; forms enforce conditional validation logic and log outcomes updating stats and queues.",
+    "Leads page implements search, filters, multi-select, bulk actions, data table, and detailed lead panel with correct validation and interaction behaviors.",
+    "Dashboard renders funnel metrics, filters with role-based visibility, drilldown callbacks, and drop reason analytics including empty states.",
+    "Settings enforces access control, supports pipeline and stage management with validation, drop reason toggles, and team member management workflows with expected UI states.",
+    "Responsiveness and accessibility are verified across desktop, tablet, and mobile layouts, including sidebar behavior and modal/overlay components.",
+    "Proper error handling, loading states, and empty states are implemented across all data fetching interactions.",
+    "Test-driven development approach is followed with tests covering key user flows and edge cases for each section as specified."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "React 19",
+      "React Router",
+      "Vite",
+      "Tailwind CSS v4",
+      "Lucide React"
+    ],
+    "features": [
+      {
+        "name": "Routing and App Layout",
+        "description": "Browser router with shell layout wrapping Today, Leads, Dashboard, and Settings routes plus 404.",
+        "files": [
+          "src/router.tsx",
+          "src/layouts/AppLayout.tsx",
+          "src/main.tsx"
+        ]
+      },
+      {
+        "name": "Application Shell",
+        "description": "Reusable shell with main navigation and user menu used across pages.",
+        "files": [
+          "src/shell/components/AppShell.tsx",
+          "src/shell/components/MainNav.tsx",
+          "src/shell/components/UserMenu.tsx",
+          "src/shell/components/index.ts"
+        ]
+      },
+      {
+        "name": "Today Page and Components",
+        "description": "Today workflow UI with stats header, lead lists, lead panel, and outcome form driven by sample data.",
+        "files": [
+          "src/pages/TodayPage.tsx",
+          "src/sections/today/components/TodayView.tsx",
+          "src/sections/today/components/StatsHeader.tsx",
+          "src/sections/today/components/LeadList.tsx",
+          "src/sections/today/components/LeadPanel.tsx",
+          "src/sections/today/components/OutcomeForm.tsx",
+          "src/sections/today/components/LeadRow.tsx",
+          "src/sections/today/types.ts",
+          "src/sections/today/sample-data.json"
+        ]
+      },
+      {
+        "name": "Leads Page and Components",
+        "description": "Leads table, detail panel, and outcomes UI for reviewing and acting on leads.",
+        "files": [
+          "src/pages/LeadsPage.tsx",
+          "src/sections/leads/components/LeadsView.tsx",
+          "src/sections/leads/components/LeadTableRow.tsx",
+          "src/sections/leads/components/LeadDetailPanel.tsx",
+          "src/sections/leads/components/OutcomeForm.tsx",
+          "src/sections/leads/types.ts",
+          "src/sections/leads/sample-data.json"
+        ]
+      },
+      {
+        "name": "Dashboard Page and Components",
+        "description": "Dashboard metrics and charts with filters, funnel cards, and drop reason chart.",
+        "files": [
+          "src/pages/DashboardPage.tsx",
+          "src/sections/dashboard/components/DashboardView.tsx",
+          "src/sections/dashboard/components/FilterBar.tsx",
+          "src/sections/dashboard/components/FunnelCard.tsx",
+          "src/sections/dashboard/components/DropReasonChart.tsx",
+          "src/sections/dashboard/types.ts",
+          "src/sections/dashboard/sample-data.json"
+        ]
+      },
+      {
+        "name": "Settings Page and Components",
+        "description": "Settings UI for pipeline, stages, drop reasons, and team management.",
+        "files": [
+          "src/pages/SettingsPage.tsx",
+          "src/sections/settings/components/SettingsView.tsx",
+          "src/sections/settings/components/PipelinePanel.tsx",
+          "src/sections/settings/components/StageList.tsx",
+          "src/sections/settings/components/DropReasonPanel.tsx",
+          "src/sections/settings/components/TeamPanel.tsx",
+          "src/sections/settings/types.ts",
+          "src/sections/settings/sample-data.json"
+        ]
+      },
+      {
+        "name": "Not Found Page",
+        "description": "Simple 404 page for unknown routes.",
+        "files": [
+          "src/pages/NotFoundPage.tsx"
+        ]
+      },
+      {
+        "name": "Data Model Types",
+        "description": "Shared data model typings used by sections.",
+        "files": [
+          "src/types/data-model.ts",
+          "src/sections/dashboard/types.ts",
+          "src/sections/leads/types.ts",
+          "src/sections/today/types.ts",
+          "src/sections/settings/types.ts"
+        ]
+      },
+      {
+        "name": "Styling and Tokens",
+        "description": "Base styles and design tokens for the UI.",
+        "files": [
+          "src/index.css",
+          "src/styles/tokens.css",
+          "src/App.css"
+        ]
+      }
+    ]
+  }
+}

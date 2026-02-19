@@ -1,0 +1,599 @@
+{
+  "_meta": {
+    "models": {
+      "leads": "Prospective customers with their score, source, stage, qualification, contact info, owner, and activity history.",
+      "users": "Team members (BDs and founders) who own and work leads.",
+      "timelineEvents": "Combined activity history including calls, stage changes, notes, and link sends.",
+      "filterOptions": "Available options for quick filters and advanced filter drawer."
+    },
+    "relationships": [
+      "Each Lead has an Owner (a User) who is responsible for working that lead",
+      "Each Lead has a Timeline of events (calls, stage changes, notes, links sent)",
+      "Each Lead may have a pending Next Action (follow-up task with due date/time)",
+      "Leads are filtered by Source, Stage, Owner, Qualification, and various flags"
+    ]
+  },
+  "users": [
+    { "id": "user-001", "name": "Rahul Mehta", "role": "bd", "avatar": null },
+    { "id": "user-002", "name": "Pooja Sharma", "role": "bd", "avatar": null },
+    { "id": "user-003", "name": "Arjun Kapoor", "role": "founder", "avatar": null }
+  ],
+  "leads": [
+    {
+      "id": "lead-001",
+      "name": "Rajesh Kumar",
+      "phone": "9876543210",
+      "email": "rajesh.kumar@gmail.com",
+      "score": 82,
+      "source": "YouTube",
+      "stage": "Hot",
+      "qualification": "qualified",
+      "ownerId": "user-001",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Sent demo link - check if watched",
+        "dueDate": "2024-01-10",
+        "dueTime": "10:00"
+      },
+      "lastContactDate": "2024-01-08",
+      "createdDate": "2024-01-02",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "Dec 2024",
+        "city": "Delhi",
+        "language": "Hindi"
+      },
+      "timeline": [
+        {
+          "id": "evt-001",
+          "type": "call",
+          "date": "2024-01-08",
+          "time": "14:30",
+          "callResult": "connected",
+          "conversationOutcome": "call_back_later",
+          "nextAction": "send_demo_link",
+          "notes": "Interested in UGC NET Paper 2. Asked for demo before deciding. Will watch and call back.",
+          "userId": "user-001"
+        },
+        {
+          "id": "evt-002",
+          "type": "link_sent",
+          "date": "2024-01-08",
+          "time": "14:35",
+          "linkType": "demo",
+          "userId": "user-001"
+        },
+        {
+          "id": "evt-003",
+          "type": "call",
+          "date": "2024-01-05",
+          "time": "11:15",
+          "callResult": "did_not_pick",
+          "notes": null,
+          "userId": "user-001"
+        },
+        {
+          "id": "evt-004",
+          "type": "stage_change",
+          "date": "2024-01-08",
+          "time": "14:32",
+          "fromStage": "Contacted",
+          "toStage": "Hot",
+          "userId": "user-001"
+        }
+      ]
+    },
+    {
+      "id": "lead-002",
+      "name": "Priya Sharma",
+      "phone": "8765432109",
+      "email": "priya.sharma92@gmail.com",
+      "score": 75,
+      "source": "WhatsApp Group",
+      "stage": "Contacted",
+      "qualification": "qualified",
+      "ownerId": "user-002",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Discussing with family - call to check decision",
+        "dueDate": "2024-01-10",
+        "dueTime": "11:30"
+      },
+      "lastContactDate": "2024-01-09",
+      "createdDate": "2024-01-04",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "Dec 2024",
+        "city": "Mumbai",
+        "language": "English"
+      },
+      "timeline": [
+        {
+          "id": "evt-005",
+          "type": "call",
+          "date": "2024-01-09",
+          "time": "16:00",
+          "callResult": "connected",
+          "conversationOutcome": "discuss_with_family",
+          "nextAction": "schedule_follow_up",
+          "notes": "Very interested. Preparing for Dec 2024 attempt. Needs to confirm budget with parents.",
+          "userId": "user-002"
+        }
+      ]
+    },
+    {
+      "id": "lead-003",
+      "name": "Amit Verma",
+      "phone": "9988776655",
+      "email": "amit.verma@yahoo.com",
+      "score": 68,
+      "source": "App Install",
+      "stage": "Contacted",
+      "qualification": "unknown",
+      "ownerId": "user-001",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Requested discount - check with manager and call back",
+        "dueDate": "2024-01-09",
+        "dueTime": "14:00"
+      },
+      "lastContactDate": "2024-01-07",
+      "createdDate": "2024-01-03",
+      "flags": [],
+      "extraFields": {
+        "exam": "UPSC",
+        "attempt": "2025",
+        "city": "Lucknow",
+        "language": "Hindi"
+      },
+      "timeline": [
+        {
+          "id": "evt-006",
+          "type": "call",
+          "date": "2024-01-07",
+          "time": "10:30",
+          "callResult": "connected",
+          "conversationOutcome": "need_discount",
+          "nextAction": "schedule_follow_up",
+          "notes": "Likes the course but says it's expensive. Asked if we can offer 20% discount. Said will check with manager.",
+          "userId": "user-001"
+        }
+      ]
+    },
+    {
+      "id": "lead-004",
+      "name": "Sneha Patel",
+      "phone": "8877665544",
+      "email": "sneha.patel@gmail.com",
+      "score": 91,
+      "source": "Referral",
+      "stage": "Hot",
+      "qualification": "qualified",
+      "ownerId": "user-002",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Sent payment link - confirm payment",
+        "dueDate": "2024-01-10",
+        "dueTime": "15:30"
+      },
+      "lastContactDate": "2024-01-09",
+      "createdDate": "2024-01-08",
+      "flags": [],
+      "extraFields": {
+        "exam": "UPSC",
+        "attempt": "2024",
+        "city": "Ahmedabad",
+        "language": "English"
+      },
+      "timeline": [
+        {
+          "id": "evt-007",
+          "type": "call",
+          "date": "2024-01-09",
+          "time": "18:00",
+          "callResult": "connected",
+          "conversationOutcome": null,
+          "nextAction": "send_payment_link",
+          "notes": "Ready to buy! Referred by Meera who took our UPSC course. Sent payment link on WhatsApp.",
+          "userId": "user-002"
+        },
+        {
+          "id": "evt-008",
+          "type": "link_sent",
+          "date": "2024-01-09",
+          "time": "18:05",
+          "linkType": "payment",
+          "userId": "user-002"
+        }
+      ]
+    },
+    {
+      "id": "lead-005",
+      "name": "Vikram Singh",
+      "phone": "7766554433",
+      "email": "vikram.singh@outlook.com",
+      "score": 58,
+      "source": "YouTube",
+      "stage": "Contacted",
+      "qualification": "unknown",
+      "ownerId": "user-001",
+      "nextAction": {
+        "type": "retry",
+        "reason": "Retry - did not pick last 2 times",
+        "dueDate": "2024-01-10",
+        "dueTime": "17:00"
+      },
+      "lastContactDate": "2024-01-06",
+      "createdDate": "2024-01-01",
+      "flags": [],
+      "extraFields": {
+        "exam": "SSC CGL",
+        "attempt": "2024",
+        "city": "Jaipur",
+        "language": "Hindi"
+      },
+      "timeline": [
+        {
+          "id": "evt-009",
+          "type": "call",
+          "date": "2024-01-06",
+          "time": "12:00",
+          "callResult": "did_not_pick",
+          "notes": null,
+          "userId": "user-001"
+        },
+        {
+          "id": "evt-010",
+          "type": "call",
+          "date": "2024-01-04",
+          "time": "15:30",
+          "callResult": "phone_busy",
+          "notes": null,
+          "userId": "user-001"
+        }
+      ]
+    },
+    {
+      "id": "lead-006",
+      "name": "Ananya Reddy",
+      "phone": "9654321098",
+      "email": "ananya.reddy@gmail.com",
+      "score": 91,
+      "source": "App Install",
+      "stage": "New",
+      "qualification": "unknown",
+      "ownerId": null,
+      "nextAction": null,
+      "lastContactDate": null,
+      "createdDate": "2024-01-10",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "June 2024",
+        "city": "Hyderabad",
+        "language": "English"
+      },
+      "timeline": []
+    },
+    {
+      "id": "lead-007",
+      "name": "Rohit Mehta",
+      "phone": "8543210987",
+      "email": "rohit.mehta@gmail.com",
+      "score": 85,
+      "source": "YouTube",
+      "stage": "New",
+      "qualification": "unknown",
+      "ownerId": null,
+      "nextAction": null,
+      "lastContactDate": null,
+      "createdDate": "2024-01-10",
+      "flags": [],
+      "extraFields": {
+        "exam": "GATE",
+        "attempt": "2025",
+        "city": "Pune",
+        "language": "English"
+      },
+      "timeline": []
+    },
+    {
+      "id": "lead-008",
+      "name": "Kavita Joshi",
+      "phone": "9432109876",
+      "email": "kavita.joshi@yahoo.com",
+      "score": 79,
+      "source": "WhatsApp Group",
+      "stage": "New",
+      "qualification": "unknown",
+      "ownerId": "user-002",
+      "nextAction": null,
+      "lastContactDate": null,
+      "createdDate": "2024-01-09",
+      "flags": [],
+      "extraFields": {
+        "exam": "Bank PO",
+        "attempt": "2024",
+        "city": "Kolkata",
+        "language": "English"
+      },
+      "timeline": []
+    },
+    {
+      "id": "lead-009",
+      "name": "Suresh Nair",
+      "phone": "8321098765",
+      "email": "suresh.nair@gmail.com",
+      "score": 44,
+      "source": "Paid Ad",
+      "stage": "Lost",
+      "qualification": "unqualified",
+      "ownerId": "user-001",
+      "nextAction": null,
+      "lastContactDate": "2024-01-05",
+      "createdDate": "2024-01-01",
+      "flags": [],
+      "extraFields": {
+        "exam": "UPSC",
+        "attempt": "2024",
+        "city": "Chennai",
+        "language": "Tamil"
+      },
+      "lossReason": "already_purchased_competitor",
+      "timeline": [
+        {
+          "id": "evt-011",
+          "type": "call",
+          "date": "2024-01-05",
+          "time": "11:00",
+          "callResult": "connected",
+          "conversationOutcome": "already_purchased_competitor",
+          "nextAction": "close_lost",
+          "notes": "Already enrolled in Unacademy last week. Not interested in switching.",
+          "userId": "user-001"
+        },
+        {
+          "id": "evt-012",
+          "type": "stage_change",
+          "date": "2024-01-05",
+          "time": "11:05",
+          "fromStage": "Contacted",
+          "toStage": "Lost",
+          "reason": "already_purchased_competitor",
+          "userId": "user-001"
+        }
+      ]
+    },
+    {
+      "id": "lead-010",
+      "name": "Deepa Iyer",
+      "phone": "9210987654",
+      "email": "deepa.iyer@gmail.com",
+      "score": 88,
+      "source": "Referral",
+      "stage": "Won",
+      "qualification": "qualified",
+      "ownerId": "user-002",
+      "nextAction": null,
+      "lastContactDate": "2024-01-08",
+      "createdDate": "2024-01-03",
+      "flags": ["already_customer"],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "June 2024",
+        "city": "Bangalore",
+        "language": "English"
+      },
+      "wonDetails": {
+        "course": "UGC NET Complete Course",
+        "amount": 12999
+      },
+      "timeline": [
+        {
+          "id": "evt-013",
+          "type": "call",
+          "date": "2024-01-08",
+          "time": "10:00",
+          "callResult": "connected",
+          "conversationOutcome": null,
+          "nextAction": "close_won",
+          "notes": "Payment confirmed! Very happy with the demo. Wants to start immediately.",
+          "userId": "user-002"
+        },
+        {
+          "id": "evt-014",
+          "type": "stage_change",
+          "date": "2024-01-08",
+          "time": "10:05",
+          "fromStage": "Hot",
+          "toStage": "Won",
+          "userId": "user-002"
+        }
+      ]
+    },
+    {
+      "id": "lead-011",
+      "name": "Manoj Gupta",
+      "phone": "8109876543",
+      "email": "manoj.gupta@outlook.com",
+      "score": 32,
+      "source": "App Install",
+      "stage": "Contacted",
+      "qualification": "unqualified",
+      "ownerId": "user-001",
+      "nextAction": null,
+      "lastContactDate": "2024-01-04",
+      "createdDate": "2024-01-02",
+      "flags": ["bad_number"],
+      "extraFields": {
+        "exam": "Unknown",
+        "attempt": "Unknown",
+        "city": "Indore",
+        "language": "Hindi"
+      },
+      "timeline": [
+        {
+          "id": "evt-015",
+          "type": "call",
+          "date": "2024-01-04",
+          "time": "09:30",
+          "callResult": "number_incorrect",
+          "notes": "Number does not exist. Marked as bad number.",
+          "userId": "user-001"
+        }
+      ]
+    },
+    {
+      "id": "lead-012",
+      "name": "Neha Kapoor",
+      "phone": "9098765432",
+      "email": "neha.kapoor@gmail.com",
+      "score": 55,
+      "source": "YouTube",
+      "stage": "Lost",
+      "qualification": "qualified",
+      "ownerId": "user-002",
+      "nextAction": null,
+      "lastContactDate": "2024-01-06",
+      "createdDate": "2024-01-02",
+      "flags": [],
+      "extraFields": {
+        "exam": "CTET",
+        "attempt": "July 2024",
+        "city": "Delhi",
+        "language": "Hindi"
+      },
+      "lossReason": "affordability_barrier",
+      "timeline": [
+        {
+          "id": "evt-016",
+          "type": "call",
+          "date": "2024-01-06",
+          "time": "14:00",
+          "callResult": "connected",
+          "conversationOutcome": "affordability_barrier",
+          "nextAction": "close_lost",
+          "notes": "Currently unemployed, cannot afford the course. Said will reach out when she has a job.",
+          "userId": "user-002"
+        },
+        {
+          "id": "evt-017",
+          "type": "stage_change",
+          "date": "2024-01-06",
+          "time": "14:05",
+          "fromStage": "Contacted",
+          "toStage": "Lost",
+          "reason": "affordability_barrier",
+          "userId": "user-002"
+        }
+      ]
+    }
+  ],
+  "filterCounts": {
+    "myLeads": 6,
+    "overdue": 1,
+    "dueToday": 3,
+    "hot": 2,
+    "new": 3,
+    "unassigned": 2,
+    "lost7d": 2
+  },
+  "sourceOptions": [
+    { "id": "youtube", "label": "YouTube" },
+    { "id": "whatsapp_group", "label": "WhatsApp Group" },
+    { "id": "app_install", "label": "App Install" },
+    { "id": "referral", "label": "Referral" },
+    { "id": "paid_ad", "label": "Paid Ad" }
+  ],
+  "stageOptions": [
+    { "id": "new", "label": "New" },
+    { "id": "contacted", "label": "Contacted" },
+    { "id": "hot", "label": "Hot" },
+    { "id": "demo_scheduled", "label": "Demo Scheduled" },
+    { "id": "won", "label": "Won" },
+    { "id": "lost", "label": "Lost" }
+  ],
+  "qualificationOptions": [
+    { "id": "qualified", "label": "Qualified" },
+    { "id": "unknown", "label": "Unknown" },
+    { "id": "unqualified", "label": "Unqualified" }
+  ],
+  "callResultOptions": [
+    { "id": "did_not_pick", "label": "Did not pick" },
+    { "id": "phone_busy", "label": "Phone Busy" },
+    { "id": "unreachable", "label": "Unreachable" },
+    { "id": "number_incorrect", "label": "Number Incorrect" },
+    { "id": "connected", "label": "Connected" }
+  ],
+  "conversationOutcomeOptions": [
+    {
+      "category": "Intent / Fit",
+      "options": [
+        { "id": "just_browsing", "label": "Just browsing (low intent)" },
+        { "id": "other_exam", "label": "Preparing for other exam" },
+        { "id": "not_eligible", "label": "Not eligible / Not a student" },
+        { "id": "product_unavailable", "label": "Product not available" }
+      ]
+    },
+    {
+      "category": "Timing",
+      "options": [
+        { "id": "call_back_later", "label": "Asked to call back later" },
+        { "id": "discuss_with_family", "label": "Want to discuss with family" }
+      ]
+    },
+    {
+      "category": "Competition",
+      "options": [
+        { "id": "already_purchased_competitor", "label": "Already purchased from competitor" },
+        { "id": "competitor_cheaper", "label": "Competitor offering lower price" }
+      ]
+    },
+    {
+      "category": "Pricing",
+      "options": [
+        { "id": "affordability_barrier", "label": "Affordability barrier" },
+        { "id": "need_discount", "label": "Need discount" }
+      ]
+    },
+    {
+      "category": "Customer State",
+      "options": [
+        { "id": "already_customer", "label": "Already a customer" }
+      ]
+    }
+  ],
+  "nextActionOptions": [
+    { "id": "send_demo_link", "label": "Send demo link", "requiresFollowUp": true },
+    { "id": "send_payment_link", "label": "Send payment link", "requiresFollowUp": true },
+    { "id": "send_syllabus_link", "label": "Send syllabus link", "requiresFollowUp": true },
+    { "id": "schedule_follow_up", "label": "Schedule follow-up", "requiresFollowUp": true },
+    { "id": "close_won", "label": "Close Won", "requiresFollowUp": false },
+    { "id": "close_lost", "label": "Close Lost", "requiresFollowUp": false }
+  ],
+  "lossReasonOptions": [
+    { "id": "just_browsing", "label": "Just browsing (low intent)" },
+    { "id": "other_exam", "label": "Preparing for other exam" },
+    { "id": "not_eligible", "label": "Not eligible" },
+    { "id": "already_purchased_competitor", "label": "Already purchased from competitor" },
+    { "id": "competitor_cheaper", "label": "Competitor offering lower price" },
+    { "id": "affordability_barrier", "label": "Affordability barrier" },
+    { "id": "not_interested", "label": "Not interested" },
+    { "id": "unreachable", "label": "Could not reach" }
+  ],
+  "retryTimeOptions": [
+    { "id": "30min", "label": "In 30 minutes" },
+    { "id": "1hour", "label": "In 1 hour" },
+    { "id": "2hours", "label": "In 2 hours" },
+    { "id": "tomorrow_morning", "label": "Tomorrow morning" },
+    { "id": "tomorrow_afternoon", "label": "Tomorrow afternoon" },
+    { "id": "custom", "label": "Custom date/time" }
+  ],
+  "linkTypeOptions": [
+    { "id": "demo", "label": "Demo/curriculum link" },
+    { "id": "payment", "label": "Payment link" },
+    { "id": "syllabus", "label": "Batch schedule / syllabus PDF" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "executionArgs": {
+    "projectName": "cadence-app",
+    "projectPath": "/Users/classplus/Library/CloudStorage/OneDrive-BunchMicrotechnologiesPrivateLimited/Documents/Obsidian Vault/Work/Cadence-os/cadence-app",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-WekN61hrX8GWaX7sR63sxvL7CsugcZ7WjQH3_wCPbcI6DZfL8lAH2qGL96SpzucV2ENX6gAyXSOhlupz89iUK6bZxrKVfmZl5VPOBeqO4F59kg2t97hOM9iO9D72RFc-ya4"
+    }
+  },
+  "proxy": "http://96629181-8fe8-4d83-90b2-6ccd848777dc:V9Vn9PrFUw8KZhHpRbJAFqA2yyD3TEGK@tun.testsprite.com:8080"
+}

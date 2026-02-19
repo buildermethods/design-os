@@ -1,0 +1,113 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "React 19",
+    "React Router",
+    "Vite",
+    "Tailwind CSS v4",
+    "Lucide React"
+  ],
+  "features": [
+    {
+      "name": "Routing and App Layout",
+      "description": "Browser router with shell layout wrapping Today, Leads, Dashboard, and Settings routes plus 404.",
+      "files": [
+        "src/router.tsx",
+        "src/layouts/AppLayout.tsx",
+        "src/main.tsx"
+      ]
+    },
+    {
+      "name": "Application Shell",
+      "description": "Reusable shell with main navigation and user menu used across pages.",
+      "files": [
+        "src/shell/components/AppShell.tsx",
+        "src/shell/components/MainNav.tsx",
+        "src/shell/components/UserMenu.tsx",
+        "src/shell/components/index.ts"
+      ]
+    },
+    {
+      "name": "Today Page and Components",
+      "description": "Today workflow UI with stats header, lead lists, lead panel, and outcome form driven by sample data.",
+      "files": [
+        "src/pages/TodayPage.tsx",
+        "src/sections/today/components/TodayView.tsx",
+        "src/sections/today/components/StatsHeader.tsx",
+        "src/sections/today/components/LeadList.tsx",
+        "src/sections/today/components/LeadPanel.tsx",
+        "src/sections/today/components/OutcomeForm.tsx",
+        "src/sections/today/components/LeadRow.tsx",
+        "src/sections/today/types.ts",
+        "src/sections/today/sample-data.json"
+      ]
+    },
+    {
+      "name": "Leads Page and Components",
+      "description": "Leads table, detail panel, and outcomes UI for reviewing and acting on leads.",
+      "files": [
+        "src/pages/LeadsPage.tsx",
+        "src/sections/leads/components/LeadsView.tsx",
+        "src/sections/leads/components/LeadTableRow.tsx",
+        "src/sections/leads/components/LeadDetailPanel.tsx",
+        "src/sections/leads/components/OutcomeForm.tsx",
+        "src/sections/leads/types.ts",
+        "src/sections/leads/sample-data.json"
+      ]
+    },
+    {
+      "name": "Dashboard Page and Components",
+      "description": "Dashboard metrics and charts with filters, funnel cards, and drop reason chart.",
+      "files": [
+        "src/pages/DashboardPage.tsx",
+        "src/sections/dashboard/components/DashboardView.tsx",
+        "src/sections/dashboard/components/FilterBar.tsx",
+        "src/sections/dashboard/components/FunnelCard.tsx",
+        "src/sections/dashboard/components/DropReasonChart.tsx",
+        "src/sections/dashboard/types.ts",
+        "src/sections/dashboard/sample-data.json"
+      ]
+    },
+    {
+      "name": "Settings Page and Components",
+      "description": "Settings UI for pipeline, stages, drop reasons, and team management.",
+      "files": [
+        "src/pages/SettingsPage.tsx",
+        "src/sections/settings/components/SettingsView.tsx",
+        "src/sections/settings/components/PipelinePanel.tsx",
+        "src/sections/settings/components/StageList.tsx",
+        "src/sections/settings/components/DropReasonPanel.tsx",
+        "src/sections/settings/components/TeamPanel.tsx",
+        "src/sections/settings/types.ts",
+        "src/sections/settings/sample-data.json"
+      ]
+    },
+    {
+      "name": "Not Found Page",
+      "description": "Simple 404 page for unknown routes.",
+      "files": [
+        "src/pages/NotFoundPage.tsx"
+      ]
+    },
+    {
+      "name": "Data Model Types",
+      "description": "Shared data model typings used by sections.",
+      "files": [
+        "src/types/data-model.ts",
+        "src/sections/dashboard/types.ts",
+        "src/sections/leads/types.ts",
+        "src/sections/today/types.ts",
+        "src/sections/settings/types.ts"
+      ]
+    },
+    {
+      "name": "Styling and Tokens",
+      "description": "Base styles and design tokens for the UI.",
+      "files": [
+        "src/index.css",
+        "src/styles/tokens.css",
+        "src/App.css"
+      ]
+    }
+  ]
+}

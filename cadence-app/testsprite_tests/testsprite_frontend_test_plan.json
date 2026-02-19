@@ -1,0 +1,448 @@
+[
+  {
+    "id": "TC001",
+    "title": "Navigation links load correct routes",
+    "description": "Verify each main navigation link in the application shell routes to the correct page and displays the correct active state.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application shell."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Today link in the sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the Today page loads with its respective content."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Leads link in the sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the Leads page loads with the leads data table and filter UI."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Dashboard link in the sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the Dashboard page displays funnel metrics and charts."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Settings link in the sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the Settings page loads with pipeline and team management UI."
+      },
+      {
+        "type": "action",
+        "description": "Verify that the user menu shows the correct user info."
+      },
+      {
+        "type": "action",
+        "description": "Select logout from the user menu."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the user is logged out and redirected appropriately."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Today page displays prioritized follow-ups and new leads",
+    "description": "Verify the Today page loads with daily stats, two tabs showing follow-ups due and new leads, and that leads are prioritized correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Today page."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that daily progress statistics (calls made, connects, etc.) are visible."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the two tab sections 'Follow-ups Due' and 'New Leads' are visible."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that leads in each tab are ordered according to lead scoring priority."
+      },
+      {
+        "type": "action",
+        "description": "Select a lead from the 'Follow-ups Due' tab."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the lead detail side panel opens with accurate lead information and timeline."
+      },
+      {
+        "type": "action",
+        "description": "Switch to the 'New Leads' tab and select a different lead."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the correct lead detail panel loads for the selected lead."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Outcome logging form on Today page enforces conditional validation",
+    "description": "Ensure that the call outcome form enforces required fields and conditional logic validations based on selected outcomes.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the Today page and select a lead."
+      },
+      {
+        "type": "action",
+        "description": "Open the outcome logging form for this lead."
+      },
+      {
+        "type": "action",
+        "description": "Select an outcome type that requires additional input fields."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to submit the form without filling required conditional fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that form validation prevents submission and displays appropriate error messages."
+      },
+      {
+        "type": "action",
+        "description": "Fill all required conditional fields and submit the form."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the form submits successfully and updates the daily stats and follow-up queue."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Leads page search and filter functionality",
+    "description": "Verify that searching and filtering leads on the Leads page updates the data table correctly and handles no-results cases gracefully.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Leads page."
+      },
+      {
+        "type": "action",
+        "description": "Enter a known lead name or identifier in the search bar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that the leads table shows only matching leads."
+      },
+      {
+        "type": "action",
+        "description": "Apply filters such as lead status, stage, or score."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the table updates to show filtered results."
+      },
+      {
+        "type": "action",
+        "description": "Enter a search term or filter that yields no results."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that a user-friendly 'no leads found' message is displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Leads multi-select bulk actions functionality",
+    "description": "Verify that multiple leads can be selected and bulk actions (assignment, qualification, export) perform correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Go to the Leads page and select multiple leads using checkboxes."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the bulk action toolbar becomes enabled."
+      },
+      {
+        "type": "action",
+        "description": "Perform a bulk assignment action and assign leads to a BD user."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm all selected leads show the new assigned user."
+      },
+      {
+        "type": "action",
+        "description": "Perform a bulk qualification action marking leads as qualified or disqualified."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the qualification status updates appropriately in the table."
+      },
+      {
+        "type": "action",
+        "description": "Use the bulk export action."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm an export file is generated with the selected leads data."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Leads detail side panel displays complete and accurate information",
+    "description": "Confirm the selected lead’s detail side panel or bottom sheet (mobile) shows all relevant information, timeline, and correct interaction history.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "On the Leads page, select a lead."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify detailed lead data fields are populated correctly."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the timeline shows all previous interactions in chronological order."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure the outcome form pre-fills data where applicable and is usable."
+      },
+      {
+        "type": "action",
+        "description": "On mobile, open the lead details and confirm bottom sheet behaves correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Dashboard metrics rendering and drilldown",
+    "description": "Validate that funnel metrics and charts on the Dashboard load correctly with date and filter controls and that clicking on metrics drills down to filtered lead lists.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Dashboard page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify funnel metric cards (calls made, connects, hot leads, conversions, lost leads) are displayed with correct values."
+      },
+      {
+        "type": "action",
+        "description": "Adjust the date range filters."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the funnel metrics update accordingly."
+      },
+      {
+        "type": "action",
+        "description": "Use role-based filters if logged in as a founder or admin."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the filter options are visible or hidden appropriately."
+      },
+      {
+        "type": "action",
+        "description": "Click on the 'hot leads' metric card."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm it drills down to a filtered leads list matching the metric."
+      },
+      {
+        "type": "action",
+        "description": "Interact with drop reason analytic chart segments."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the chart drills down to leads filtered by selected drop reason."
+      },
+      {
+        "type": "action",
+        "description": "Apply filters that result in empty data sets."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify empty states are displayed with appropriate messaging."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Settings area access control and CRUD operations",
+    "description": "Ensure only admin users can access full Settings features and that pipelines, stages, drop reasons, and teams can be managed with proper validations.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as BD user and navigate to Settings."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access restrictions prevent editing and some sections are hidden."
+      },
+      {
+        "type": "action",
+        "description": "Login as admin user and open the Settings page."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm full access to pipeline, stage, drop reason, and team management tabs."
+      },
+      {
+        "type": "action",
+        "description": "Create a new sales pipeline with valid data."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the new pipeline appears correctly in the list."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to create a pipeline with missing or invalid data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors prevent creation."
+      },
+      {
+        "type": "action",
+        "description": "Edit existing stages and update details."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm changes persist and UI updates."
+      },
+      {
+        "type": "action",
+        "description": "Toggle drop reasons on and off."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify toggling is reflected in drop reasons used elsewhere."
+      },
+      {
+        "type": "action",
+        "description": "Add and remove team members with role assignments."
+      },
+      {
+        "type": "assertion",
+        "description": "Check team list updates accordingly and validation blocks invalid input."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Responsive design across device layouts",
+    "description": "Verify that UI components adapt appropriately across desktop, tablet, and mobile screen sizes including sidebar navigation and modal overlays.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application on a desktop screen resolution."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the sidebar is visible and navigation links display with appropriate styling."
+      },
+      {
+        "type": "action",
+        "description": "Resize the viewport to tablet size."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sidebar collapses or adapts for tablet layout and content remains accessible."
+      },
+      {
+        "type": "action",
+        "description": "Resize the viewport to mobile size."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm navigation changes to bottom sheet or alternative mobile UI and no content is clipped or inaccessible."
+      },
+      {
+        "type": "action",
+        "description": "Open modals and overlays such as outcome forms on all screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify modal responsiveness and dismissal using keyboard and touch controls."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Error handling and loading states for data interactions",
+    "description": "Ensure all data fetching and saving actions on Today, Leads, Dashboard, and Settings pages show appropriate loading indicators, handle API errors gracefully, and display user friendly error messages.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger data fetch on Today page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a loading spinner or skeleton UI is shown."
+      },
+      {
+        "type": "action",
+        "description": "Simulate a network failure for leads fetch."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm an error message is displayed with retry option."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to save an outcome with server returning error."
+      },
+      {
+        "type": "assertion",
+        "description": "Check error notification is shown and form state remains for retry."
+      },
+      {
+        "type": "action",
+        "description": "Simulate empty datasets for funnel metrics on Dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure empty states with helpful messaging are visible."
+      }
+    ]
+  }
+]
