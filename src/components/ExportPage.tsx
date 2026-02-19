@@ -22,7 +22,7 @@ export function ExportPage() {
 
   const hasOverview = !!productData.overview
   const hasRoadmap = !!productData.roadmap
-  const hasDataModel = !!productData.dataModel
+  const hasDataShape = !!productData.dataShape
   const hasDesignSystem = !!productData.designSystem
   const hasShell = !!productData.shell
   const hasSections = sectionStats.sectionsWithScreenDesigns > 0
@@ -74,7 +74,7 @@ export function ExportPage() {
               <div className="space-y-1">
                 <ChecklistItem label="Product Overview" isComplete={hasOverview} />
                 <ChecklistItem label="Product Roadmap" isComplete={hasRoadmap} />
-                <ChecklistItem label="Data Model" isComplete={hasDataModel} />
+                <ChecklistItem label="Data Shape" isComplete={hasDataShape} />
                 <ChecklistItem label="Design System" isComplete={hasDesignSystem} />
                 <ChecklistItem label="Application Shell" isComplete={hasShell} />
                 <ChecklistItem
@@ -167,7 +167,7 @@ export function ExportPage() {
                     items={['CSS tokens', 'Tailwind config', 'Font setup']}
                   />
                   <ExportItem
-                    title="Data Model"
+                    title="Data Shape"
                     description="Entity definitions and sample data for your application."
                     items={['TypeScript types', 'Sample data', 'Entity docs']}
                   />
@@ -212,8 +212,7 @@ export function ExportPage() {
               <CollapsibleContent>
                 <ol className="text-sm text-stone-600 dark:text-stone-400 space-y-2 list-decimal list-inside mt-4 pl-1">
                   <li>Copy the <code className="font-mono text-stone-800 dark:text-stone-200">product-plan/</code> folder into your codebase</li>
-                  <li>Start with Foundation (<code className="font-mono text-stone-800 dark:text-stone-200">instructions/incremental/01-foundation.md</code>)</li>
-                  <li>Then Shell (<code className="font-mono text-stone-800 dark:text-stone-200">instructions/incremental/02-shell.md</code>)</li>
+                  <li>Start with Shell (<code className="font-mono text-stone-800 dark:text-stone-200">instructions/incremental/01-shell.md</code>) — design tokens + app shell</li>
                   <li>
                     For each section:
                     <ul className="mt-1.5 ml-5 space-y-1">

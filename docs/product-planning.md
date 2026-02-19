@@ -8,52 +8,27 @@ The first phase of Design OS establishes the foundation for your product. Comple
 /product-vision
 ```
 
-Define your product's core identity. This is a conversational process where you'll establish:
+Define your product's core identity in one conversational flow. You'll establish:
 
 - **Product name** — A clear, memorable name
 - **Description** — 1-3 sentences capturing the essence
 - **Problems & solutions** — What pain points you're addressing and how
 - **Key features** — The main capabilities that make this possible
+- **Roadmap sections** — 3-5 self-contained areas of your product
+- **Data shape** — The core entities ("nouns") and how they relate
 
-Share any notes, ideas, or rough thoughts you have about what you're building. The AI will ask clarifying questions and help you refine everything into a clear product overview.
+Share any notes, ideas, or rough thoughts you have about what you're building. The AI will ask clarifying questions covering your vision, the main areas of your product, and the core things users will work with. Once it has enough information, it writes all three files automatically.
 
-**Creates:** `product/product-overview.md`
+**Creates:**
+- `product/product-overview.md` — Product description, problems/solutions, features
+- `product/product-roadmap.md` — 3-5 sections ordered by development priority
+- `product/data-shape/data-shape.md` — Core entities and relationships
 
-## 2. Product Roadmap
+**To update individually later:**
+- `/product-roadmap` — Add, remove, or reorder sections
+- `/data-shape` — Add, remove, or update entities and relationships
 
-```
-/product-roadmap
-```
-
-Break your product into 3-5 sections. Each section represents:
-
-- A navigation item in your app's UI
-- A self-contained feature area that can be designed and built independently
-- A logical phase of your development roadmap
-
-Based on your product overview, the AI will propose sections and discuss ordering. Sections are sequenced by development priority—the first section is your core functionality, with each subsequent section building on it.
-
-**Creates:** `product/product-roadmap.md`
-
-## 3. Data Model
-
-```
-/data-model
-```
-
-Define the core entities in your product—the "nouns" of your system. What are the main things users create, view, and manage?
-
-The focus is conceptual, not technical:
-
-- **Entity names** — User, Project, Invoice, Task, etc.
-- **Plain-language descriptions** — What each entity represents
-- **Relationships** — How entities connect to each other
-
-Don't worry about database schemas or field types. Keep it minimal. The implementation agent will extend the model with additional details as needed.
-
-**Creates:** `product/data-model/data-model.md`
-
-## 4. Design Tokens
+## 2. Design Tokens
 
 ```
 /design-tokens
@@ -81,7 +56,7 @@ The AI will suggest options based on your product type and help you find a combi
 
 **Creates:** `product/design-system/colors.json`, `product/design-system/typography.json`
 
-## 5. Application Shell
+## 3. Application Shell
 
 ```
 /design-shell

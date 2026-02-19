@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { ProductPage } from '@/components/ProductPage'
-import { DataModelPage } from '@/components/DataModelPage'
+import { DataShapePage } from '@/components/DataShapePage'
 import { DesignPage } from '@/components/DesignPage'
 import { SectionsPage } from '@/components/SectionsPage'
 import { SectionPage } from '@/components/SectionPage'
@@ -14,8 +14,8 @@ export const router = createBrowserRouter([
     element: <ProductPage />,
   },
   {
-    path: '/data-model',
-    element: <DataModelPage />,
+    path: '/data-shape',
+    element: <DataShapePage />,
   },
   {
     path: '/design',

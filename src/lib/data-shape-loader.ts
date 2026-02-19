@@ -1,21 +1,21 @@
 /**
- * Data model loading and parsing utilities
+ * Data shape loading and parsing utilities
  */
 
-import type { DataModel, Entity } from '@/types/product'
+import type { DataShape, Entity } from '@/types/product'
 
-// Load data model markdown file at build time
-const dataModelFiles = import.meta.glob('/product/data-model/*.md', {
+// Load data shape markdown file at build time
+const dataShapeFiles = import.meta.glob('/product/data-shape/*.md', {
   query: '?raw',
   import: 'default',
   eager: true,
 }) as Record<string, string>
 
 /**
- * Parse data-model.md content into DataModel structure
+ * Parse data-shape.md content into DataShape structure
  *
  * Expected format:
- * # Data Model
+ * # Data Shape
  *
  * ## Entities
  *
@@ -30,7 +30,7 @@ const dataModelFiles = import.meta.glob('/product/data-model/*.md', {
  * - Entity has many OtherEntity
  * - OtherEntity belongs to Entity
  */
-export function parseDataModel(md: string): DataModel | null {
+export function parseDataShape(md: string): DataShape | null {
   if (!md || !md.trim()) return null
 
   try {
@@ -76,16 +76,16 @@ export function parseDataModel(md: string): DataModel | null {
 }
 
 /**
- * Load the data model from markdown file
+ * Load the data shape from markdown file
  */
-export function loadDataModel(): DataModel | null {
-  const content = dataModelFiles['/product/data-model/data-model.md']
-  return content ? parseDataModel(content) : null
+export function loadDataShape(): DataShape | null {
+  const content = dataShapeFiles['/product/data-shape/data-shape.md']
+  return content ? parseDataShape(content) : null
 }
 
 /**
- * Check if data model has been defined
+ * Check if data shape has been defined
  */
-export function hasDataModel(): boolean {
-  return '/product/data-model/data-model.md' in dataModelFiles
+export function hasDataShape(): boolean {
+  return '/product/data-shape/data-shape.md' in dataShapeFiles
 }

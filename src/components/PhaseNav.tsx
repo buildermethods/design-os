@@ -4,7 +4,7 @@ import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
 import { loadProductData, hasExportZip } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
 
-export type Phase = 'product' | 'data-model' | 'design' | 'sections' | 'export'
+export type Phase = 'product' | 'data-shape' | 'design' | 'sections' | 'export'
 
 interface PhaseConfig {
   id: Phase
@@ -15,7 +15,7 @@ interface PhaseConfig {
 
 const phases: PhaseConfig[] = [
   { id: 'product', label: 'Product', icon: FileText, path: '/' },
-  { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
+  { id: 'data-shape', label: 'Data Shape', icon: Boxes, path: '/data-shape' },
   { id: 'design', label: 'Design', icon: Layout, path: '/design' },
   { id: 'sections', label: 'Sections', icon: LayoutList, path: '/sections' },
   { id: 'export', label: 'Export', icon: Package, path: '/export' },
@@ -36,7 +36,7 @@ function usePhaseStatuses(): PhaseInfo[] {
   // Calculate completion status for each phase
   const hasOverview = !!productData.overview
   const hasRoadmap = !!productData.roadmap
-  const hasDataModel = !!productData.dataModel
+  const hasDataShape = !!productData.dataShape
   const hasDesignSystem = !!productData.designSystem
   const hasShell = !!productData.shell
 
@@ -52,8 +52,8 @@ function usePhaseStatuses(): PhaseInfo[] {
 
   if (currentPath === '/' || currentPath === '/product') {
     currentPhaseId = 'product'
-  } else if (currentPath === '/data-model') {
-    currentPhaseId = 'data-model'
+  } else if (currentPath === '/data-shape') {
+    currentPhaseId = 'data-shape'
   } else if (currentPath === '/design' || currentPath === '/design-system' || currentPath.startsWith('/shell')) {
     currentPhaseId = 'design'
   } else if (currentPath === '/sections' || currentPath.startsWith('/sections/')) {
@@ -68,7 +68,7 @@ function usePhaseStatuses(): PhaseInfo[] {
   // Determine completion status
   const phaseComplete: Record<Phase, boolean> = {
     'product': hasOverview && hasRoadmap,
-    'data-model': hasDataModel,
+    'data-shape': hasDataShape,
     'design': hasDesignSystem || hasShell,
     'sections': hasSections,
     'export': exportZipExists,

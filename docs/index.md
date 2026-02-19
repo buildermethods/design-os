@@ -2,7 +2,7 @@
 
 Design OS is the missing step between your product idea and your codebase.
 
-It's a product planning and design tool that helps you define your product vision, structure your data model, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.
+It's a product planning and design tool that helps you define your product vision, sketch out your data shape, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.
 
 ## The Problem
 
@@ -27,16 +27,16 @@ Design OS is its own separate codebase—a design environment you use *before* b
 
 You interact with Design OS through slash commands. Each command walks you through a specific part of the process:
 
-- `/product-vision` — Define what you're building and why
-- `/product-roadmap` — Break your product into buildable sections
-- `/data-model` — Define the core entities in your system
+- `/product-vision` — Define your product, break it into sections, and sketch the data shape — all in one flow
 - `/design-tokens` — Choose your color palette and typography
 - `/design-shell` — Design navigation and layout
-- `/shape-section` — Specify a section's scope and requirements
-- `/sample-data` — Generate realistic data for screen designs
+- `/shape-section` — Define a section's scope, requirements, and generate sample data + types
 - `/design-screen` — Create production-ready React components
-- `/screenahot-design` — Snap a screenshot of a finished design screen for quick reference
+- `/screenshot-design` — Snap a screenshot of a finished design screen for quick reference
 - `/export-product` — Generate the complete handoff package
+- `/product-roadmap` — Update your product sections (after initial creation)
+- `/data-shape` — Update your data entities (after initial creation)
+- `/sample-data` — Update sample data and types (after initial creation)
 
 See [Usage](usage.md) for the full workflow.
 

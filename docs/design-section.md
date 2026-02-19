@@ -8,7 +8,7 @@ After completing [Product Planning](product-planning.md), you're ready to design
 /shape-section
 ```
 
-Define what the section does. If you have multiple sections, you'll be asked which one to work on.
+Define what the section does and generate its sample data — all in one step. If you have multiple sections, you'll be asked which one to work on.
 
 This is a conversational process to establish:
 
@@ -21,37 +21,19 @@ Share any notes or ideas you have. The AI will ask clarifying questions about us
 
 You'll also be asked whether this section should display inside the application shell (most sections do) or as a standalone page (for things like landing pages or embedded widgets).
 
-**Creates:** `product/sections/[section-id]/spec.md`
+Once it has enough information, the AI writes the spec and generates sample data + TypeScript types automatically:
 
-## 2. Create Sample Data
-
-```
-/sample-data
-```
-
-Generate realistic sample data based on the spec. This data populates your screen designs and makes them feel real.
-
-The AI analyzes your section spec and proposes a data structure:
-
-- **Entities** — Based on your global data model (if defined) or inferred from the spec
-- **Relationships** — How the data connects
-- **Sample records** — 5-10 realistic entries with varied content
-
-You'll also get TypeScript types generated automatically:
-
-- **Data interfaces** — Type definitions for each entity
-- **Props interface** — What the component expects, including callbacks for actions (onView, onEdit, onDelete, etc.)
-
-The sample data includes:
-- Realistic names, dates, and descriptions (not "Lorem ipsum")
-- Varied content lengths and statuses
-- Edge cases (empty arrays, long text)
+- **Sample data** — 5-10 realistic records with varied content, edge cases, and a `_meta` section describing each entity
+- **TypeScript types** — Data interfaces for each entity, plus a Props interface with callbacks for actions
 
 **Creates:**
+- `product/sections/[section-id]/spec.md` — Section specification
 - `product/sections/[section-id]/data.json` — Sample data with `_meta` descriptions
 - `product/sections/[section-id]/types.ts` — TypeScript interfaces
 
-## 3. Design the Screen
+**To update sample data later:** Run `/sample-data` to modify the data structure or sample records.
+
+## 2. Design the Screen
 
 ```
 /design-screen
@@ -103,7 +85,7 @@ If the spec implies multiple views (list view, detail view, form, etc.), you'll 
 
 **Important:** Restart your dev server after creating screen designs to see the changes.
 
-## 4. Capture Screenshots (Optional)
+## 3. Capture Screenshots (Optional)
 
 ```
 /screenshot-design
@@ -128,7 +110,7 @@ Screenshots are useful for:
 
 ## Repeat for Each Section
 
-Work through your roadmap sections in order. Each section builds on the foundation you established and benefits from the consistency of your global data model and design tokens.
+Work through your roadmap sections in order. Each section builds on the foundation you established and benefits from the consistency of your global data shape and design tokens.
 
 ## What's Next
 

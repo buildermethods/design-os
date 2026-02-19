@@ -7,7 +7,7 @@ interface NextPhaseButtonProps {
 }
 
 const phaseConfig: Record<Exclude<Phase, 'product'>, { label: string; icon: typeof FileText; path: string }> = {
-  'data-model': { label: 'Data Model', icon: Boxes, path: '/data-model' },
+  'data-shape': { label: 'Data Shape', icon: Boxes, path: '/data-shape' },
   'design': { label: 'Design', icon: Layout, path: '/design' },
   'sections': { label: 'Sections', icon: LayoutList, path: '/sections' },
   'export': { label: 'Export', icon: Package, path: '/export' },

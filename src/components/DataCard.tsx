@@ -64,13 +64,13 @@ export function DataCard({ data }: DataCardProps) {
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-4">
-        {/* Data Model Descriptions */}
+        {/* Data Shape Descriptions */}
         {meta && (
           <div className="space-y-6">
             {/* Models - Card Grid */}
             <div>
               <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-                Data Models
+                Data Shapes
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {Object.entries(meta.models).map(([modelName, description]) => (

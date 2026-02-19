@@ -34,7 +34,7 @@ export interface ProductRoadmap {
 }
 
 // =============================================================================
-// Data Model
+// Data Shape
 // =============================================================================
 
 export interface Entity {
@@ -42,7 +42,7 @@ export interface Entity {
   description: string
 }
 
-export interface DataModel {
+export interface DataShape {
   entities: Entity[]
   relationships: string[]
 }
@@ -91,7 +91,7 @@ export interface ShellInfo {
 export interface ProductData {
   overview: ProductOverview | null
   roadmap: ProductRoadmap | null
-  dataModel: DataModel | null
+  dataShape: DataShape | null
   designSystem: DesignSystem | null
   shell: ShellInfo | null
 }

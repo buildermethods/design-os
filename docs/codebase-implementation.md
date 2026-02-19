@@ -18,9 +18,8 @@ For larger products or when you want to review progress incrementally.
 
 Work through the instructions in order:
 
-1. **Foundation** (`instructions/incremental/01-foundation.md`) — Design tokens, data model types, routing
-2. **Shell** (`instructions/incremental/02-shell.md`) — Application shell and navigation
-3. **Sections** (`instructions/incremental/03-*.md`, `04-*.md`, etc.) — Each feature section, one at a time
+1. **Shell** (`instructions/incremental/01-shell.md`) — Design tokens and application shell
+2. **Sections** (`instructions/incremental/02-*.md`, `03-*.md`, etc.) — Each feature section, one at a time
 
 For each milestone:
 
@@ -34,8 +33,8 @@ For each milestone:
 **The section prompt:**
 
 - References the section's instruction file and assets
-- Points to `tests.md` for test-driven development
-- Asks about auth, data relationships, and integration points
+- Points to `tests.md` for UI behavior test specs
+- Guides the agent to ask clarifying questions before implementing
 
 ### Option B: One-Shot Implementation
 
@@ -49,14 +48,7 @@ For simpler products or when you want to build everything in one session.
 4. Answer the agent's clarifying questions about auth, user modeling, etc.
 5. Let the agent plan and implement everything
 
-The prompt references `product-overview.md` and `instructions/one-shot-instructions.md`, and guides your agent to ask important questions before starting.
-
-**The prompt includes questions about:**
-
-- Authentication & authorization (login methods, user roles)
-- User & account modeling (single-user vs multi-user, teams/workspaces)
-- Tech stack preferences (backend framework, database)
-- Any other clarifications needed
+The prompt references `product-overview.md` and `instructions/one-shot-instructions.md`, and guides your agent to review all provided files and ask clarifying questions before starting.
 
 ## Test-Driven Development
 
@@ -82,69 +74,40 @@ We also recommend a spec-driven approach:
 
 1. **Review the design** — Understand what's been designed and why
 2. **Ask clarifying questions** — Resolve any ambiguities before coding
-3. **Write the technical spec** — Define the backend architecture, API contracts, database schema
+3. **Plan the implementation** — Decide on architecture, data layer, and integration approach
 4. **Write tests first** — Based on the provided test instructions
 5. **Implement** — Build to make tests pass
 6. **Verify** — Ensure the implementation matches the design
 
-This approach prevents wasted work from misunderstandings and ensures the backend properly supports the frontend designs.
+This approach prevents wasted work from misunderstandings and ensures the implementation properly supports the UI designs.
 
 ## Clarifying Questions
 
-Before finalizing any implementation plan, encourage your agent to ask questions like:
+Before finalizing any implementation plan, encourage your agent to review all provided files and ask clarifying questions about:
 
-**Architecture:**
-- What backend framework are we using?
-- How should authentication work?
-- Are there existing patterns in this codebase to follow?
+- Your tech stack and any existing codebase conventions
+- Authentication and user management approach
+- How to extend the data shapes for your backend needs
+- Any product requirements that need clarification
+- Anything else needed before implementing
 
-**Data:**
-- How should the data model extend what's defined?
-- Are there validation rules beyond what the UI shows?
-- How should relationships be handled (eager loading, lazy loading)?
+## What's Included vs. What You Build
 
-**Integration:**
-- How should the callbacks be implemented (API calls, local state)?
-- What error handling patterns should we use?
-- Are there existing UI components to reuse alongside the new ones?
+The Design OS export provides:
 
-**Scope:**
-- Should we implement all features in this milestone or prioritize?
-- Are there any features to skip for now?
-- What's the testing strategy?
+- **Finished UI components** — Props-based, fully styled, responsive, dark mode support
+- **Product requirements** — Specs, user flows, and scope definitions
+- **Design system tokens** — Colors, typography, CSS custom properties
+- **Sample data** — Showing the shape of data components expect
+- **UI behavior test specs** — What to test from the user's perspective
 
-## What Your Agent Needs to Build
+Your implementation agent builds everything else — the backend, data layer, routing, state management, and tests. The components accept data and fire callbacks via props; how you fulfill those contracts is an implementation decision.
 
-The Design OS export provides finished UI designs. Your implementation agent still needs to create:
-
-**Backend:**
-- Database schema and migrations
-- API endpoints (REST or GraphQL)
-- Business logic and validation
-- Authentication and authorization
-
-**Data Layer:**
-- State management setup
-- Data fetching and caching
-- Real-time updates (if needed)
-
-**Integration:**
-- Routing configuration
-- Callback implementations
-- Error handling and loading states
-- Empty state handling (when no records exist)
-- Form validation and submission
-
-**Tests:**
-- Unit and integration tests based on `tests.md` instructions
-- User flow tests (success and failure paths)
-- Empty state verification
-
-**The UI components are complete and production-ready.** Focus implementation effort on the data layer, backend, and tests—don't redesign or restyle the provided components.
+**The UI components are complete and production-ready.** Wire them up, don't rebuild them.
 
 ## Tips
 
-- **Use the pre-written prompts** — They include important clarifying questions about auth and data modeling
+- **Use the pre-written prompts** — They guide your agent to review designs and ask the right questions
 - **Always include product-overview.md** — It gives essential context about the full product
 - **Write tests first** — Use the `tests.md` instructions for TDD
 - **Review incrementally** — Section-by-section implementation lets you catch issues early

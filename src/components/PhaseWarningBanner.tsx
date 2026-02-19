@@ -19,7 +19,7 @@ export function PhaseWarningBanner() {
   const productData = useMemo(() => loadProductData(), [])
   const [isDismissed, setIsDismissed] = useState(true) // Start dismissed to avoid flash
 
-  const hasDataModel = !!productData.dataModel
+  const hasDataShape = !!productData.dataShape
   const hasDesignSystem = !!(productData.designSystem?.colors || productData.designSystem?.typography)
   const hasShell = !!productData.shell?.spec
   const hasDesign = hasDesignSystem || hasShell
@@ -39,14 +39,14 @@ export function PhaseWarningBanner() {
   }
 
   // Don't show if both phases are complete or if dismissed
-  if ((hasDataModel && hasDesign) || isDismissed) {
+  if ((hasDataShape && hasDesign) || isDismissed) {
     return null
   }
 
   // Build the warning message
   const missingPhases: { name: string; path: string }[] = []
-  if (!hasDataModel) {
-    missingPhases.push({ name: 'Data Model', path: '/data-model' })
+  if (!hasDataShape) {
+    missingPhases.push({ name: 'Data Shape', path: '/data-shape' })
   }
   if (!hasDesign) {
     missingPhases.push({ name: 'Design', path: '/design' })

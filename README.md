@@ -2,7 +2,7 @@
 
 ## The missing design process between your idea and your codebase.
 
-[Design OS](https://buildermethods.com/design-os) is a product planning and design tool that helps you define your product vision, structure your data model, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.
+[Design OS](https://buildermethods.com/design-os) is a product planning and design tool that helps you define your product vision, sketch out your data shape, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.
 
 ## The Problem
 

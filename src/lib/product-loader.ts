@@ -3,7 +3,7 @@
  */
 
 import type { ProductOverview, ProductRoadmap, Problem, Section, ProductData } from '@/types/product'
-import { loadDataModel, hasDataModel } from './data-model-loader'
+import { loadDataShape, hasDataShape } from './data-shape-loader'
 import { loadDesignSystem, hasDesignSystem } from './design-system-loader'
 import { loadShellInfo, hasShell } from './shell-loader'
 
@@ -55,16 +55,19 @@ export function parseProductOverview(md: string): ProductOverview | null {
   if (!md || !md.trim()) return null
 
   try {
+    // Normalize line endings (Windows CRLF → LF)
+    const normalizedMd = md.replace(/\r\n/g, '\n')
+
     // Extract product name from first # heading
-    const nameMatch = md.match(/^#\s+(.+)$/m)
+    const nameMatch = normalizedMd.match(/^#\s+(.+)$/m)
     const name = nameMatch?.[1]?.trim() || 'Product Overview'
 
     // Extract description - content between ## Description and next ##
-    const descMatch = md.match(/## Description\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const descMatch = normalizedMd.match(/## Description\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const description = descMatch?.[1]?.trim() || ''
 
     // Extract problems - ### Problem N: Title pattern
-    const problemsSection = md.match(/## Problems & Solutions\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const problemsSection = normalizedMd.match(/## Problems & Solutions\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const problems: Problem[] = []
 
     if (problemsSection?.[1]) {
@@ -78,7 +81,7 @@ export function parseProductOverview(md: string): ProductOverview | null {
     }
 
     // Extract features - bullet list after ## Key Features
-    const featuresSection = md.match(/## Key Features\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
+    const featuresSection = normalizedMd.match(/## Key Features\s*\n+([\s\S]*?)(?=\n## |\n#[^#]|$)/)
     const features: string[] = []
 
     if (featuresSection?.[1]) {
@@ -122,8 +125,11 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
   try {
     const sections: Section[] = []
 
+    // Normalize line endings (Windows CRLF → LF)
+    const normalizedMd = md.replace(/\r\n/g, '\n')
+
     // Match sections with pattern ### N. Title
-    const sectionMatches = [...md.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
+    const sectionMatches = [...normalizedMd.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
 
     for (const match of sectionMatches) {
       const order = parseInt(match[1], 10)
@@ -161,7 +167,7 @@ export function loadProductData(): ProductData {
   return {
     overview: overviewContent ? parseProductOverview(overviewContent) : null,
     roadmap: roadmapContent ? parseProductRoadmap(roadmapContent) : null,
-    dataModel: loadDataModel(),
+    dataShape: loadDataShape(),
     designSystem: loadDesignSystem(),
     shell: loadShellInfo(),
   }
@@ -196,4 +202,4 @@ export function getExportZipUrl(): string | null {
 }
 
 // Re-export utility functions for checking individual pieces
-export { hasDataModel, hasDesignSystem, hasShell }
+export { hasDataShape, hasDesignSystem, hasShell }

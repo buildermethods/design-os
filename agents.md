@@ -1,6 +1,6 @@
 # Agent Directives for Design OS
 
-Design OS is a **product planning and design tool** that helps users define their product vision, structure their data model, design their UI, and prepare export packages for implementation in a separate codebase.
+Design OS is a **product planning and design tool** that helps users define their product vision, sketch out their data shape, design their UI, and prepare export packages for implementation in a separate codebase.
 
 > **Important**: Design OS is a planning tool, not the end product codebase. The screen designs and components generated here are meant to be exported and integrated into your actual product's codebase.
 
@@ -29,33 +29,27 @@ The product you're planning and designing. When creating screen designs and expo
 
 Design OS follows a structured planning sequence:
 
-### 1. Product Overview (`/product-vision`)
-Define your product's core description, the problems it solves, and key features.
-**Output:** `product/product-overview.md`
+### 1. Product Vision (`/product-vision`)
+Define your product overview, roadmap sections, and data shape — all in one conversational flow. After answering clarifying questions, all three files are generated automatically.
+**Output:** `product/product-overview.md`, `product/product-roadmap.md`, `product/data-shape/data-shape.md`
 
-### 2. Product Roadmap (`/product-roadmap`)
-Break your product into 3-5 development sections. Each section represents a self-contained area that can be designed and built independently.
-**Output:** `product/product-roadmap.md`
+Use `/product-roadmap`, `/data-shape` individually to update those files after initial creation.
 
-### 3. Data Model (`/data-model`)
-Define the core entities and relationships in your product. This establishes the "nouns" of your system and ensures consistency across sections.
-**Output:** `product/data-model/data-model.md`
-
-### 4. Design System (`/design-tokens`)
+### 2. Design System (`/design-tokens`)
 Choose your color palette (from Tailwind) and typography (from Google Fonts). These tokens are applied to all screen designs.
 **Output:** `product/design-system/colors.json`, `product/design-system/typography.json`
 
-### 5. Application Shell (`/design-shell`)
+### 3. Application Shell (`/design-shell`)
 Design the persistent navigation and layout that wraps all sections.
 **Output:** `product/shell/spec.md`, `src/shell/components/`
 
-### 6. For Each Section:
-- `/shape-section` — Define the specification
-- `/sample-data` — Create sample data and types
+### 4. For Each Section:
+- `/shape-section` — Define the specification and generate sample data + types
+- `/sample-data` — Update sample data and types (if already created)
 - `/design-screen` — Create screen designs
 - `/screenshot-design` — Capture screenshots
 
-### 7. Export (`/export-product`)
+### 5. Export (`/export-product`)
 Generate the complete export package with all components, types, and handoff documentation.
 **Output:** `product-plan/`
 
@@ -68,8 +62,8 @@ product/                           # Product definition (portable)
 ├── product-overview.md            # Product description, problems/solutions, features
 ├── product-roadmap.md             # List of sections with titles and descriptions
 │
-├── data-model/                    # Global data model
-│   └── data-model.md              # Entity descriptions and relationships
+├── data-shape/                    # Product data shape
+│   └── data-shape.md              # Entity names, descriptions, and relationships
 │
 ├── design-system/                 # Design tokens
 │   ├── colors.json                # { primary, secondary, neutral }
@@ -110,11 +104,10 @@ product-plan/                      # Export package (generated)
 ├── instructions/                  # Implementation instructions
 │   ├── one-shot-instructions.md   # All milestones combined
 │   └── incremental/               # Milestone-by-milestone instructions
-│       ├── 01-foundation.md
-│       ├── 02-shell.md
+│       ├── 01-shell.md
 │       └── [NN]-[section-id].md   # Section-specific instructions
 ├── design-system/                 # Tokens, colors, fonts
-├── data-model/                    # Types and sample data
+├── data-shapes/                   # UI data contracts (types components expect)
 ├── shell/                         # Shell components
 └── sections/                      # Section components (with tests.md each)
 ```
@@ -161,10 +154,10 @@ Design OS is organized around four main areas:
    - Key features
    - Sections/roadmap
 
-2. **Data Model** — The "nouns" of the system
+2. **Data Shape** — The "nouns" of the system
    - Core entity names and descriptions
-   - Relationships between entities
-   - Minimal — leaves room for implementation
+   - Conceptual relationships between entities
+   - Shared vocabulary for consistent naming across sections
 
 3. **Design System** — The "look and feel"
    - Color palette (Tailwind colors)
@@ -191,19 +184,20 @@ Design OS separates concerns between its own UI and the product being designed:
 
 ## Export & Handoff
 
-The `/export-product` command generates a complete handoff package:
+The `/export-product` command generates a UI design handoff package:
 
 - **Ready-to-use prompts**: Pre-written prompts to copy/paste into coding agents
   - `one-shot-prompt.md`: For full implementation in one session
   - `section-prompt.md`: Template for section-by-section implementation
-- **Implementation instructions**: Detailed guides for each milestone
+- **Implementation instructions**: UI-focused guides for each milestone
   - `product-overview.md`: Always provide for context
   - `one-shot-instructions.md`: All milestones combined
   - Incremental instructions in `instructions/incremental/`
-- **Test instructions**: Each section includes `tests.md` with TDD specs
+- **Test specs**: Each section includes `tests.md` with UI behavior specs
 - **Portable components**: Props-based, ready for any React setup
+- **Data shapes**: TypeScript interfaces defining what data the components expect
 
-The prompts guide the implementation agent to ask clarifying questions about authentication, user modeling, and tech stack before building. Test instructions are framework-agnostic and include user flows, empty states, and edge cases.
+The handoff focuses on UI designs, product requirements, and user flows. Backend architecture, data modeling, and business logic decisions are left to the implementation agent. The prompts guide the agent to ask clarifying questions about tech stack and requirements before building.
 
 ---
 

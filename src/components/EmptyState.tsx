@@ -1,7 +1,7 @@
 import { FileText, Map, ClipboardList, Database, Layout, Package, Boxes, Palette, PanelLeft } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-model' | 'design-system' | 'shell' | 'export'
+type EmptyStateType = 'overview' | 'roadmap' | 'spec' | 'data' | 'screen-designs' | 'data-shape' | 'design-system' | 'shell' | 'export'
 
 interface EmptyStateProps {
   type: EmptyStateType
@@ -43,11 +43,11 @@ const config: Record<EmptyStateType, {
     command: '/design-screen',
     description: 'Create screen designs for this section',
   },
-  'data-model': {
+  'data-shape': {
     icon: Boxes,
-    title: 'No data model defined yet',
-    command: '/data-model',
-    description: 'Define the core entities and relationships',
+    title: 'No data shape defined yet',
+    command: '/data-shape',
+    description: 'Sketch out the general shape of your product\'s data',
   },
   'design-system': {
     icon: Palette,

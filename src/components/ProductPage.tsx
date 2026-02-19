@@ -88,7 +88,7 @@ export function ProductPage() {
         {/* Next Phase Button - shown when all steps complete */}
         {allStepsComplete && (
           <StepIndicator step={3} status="current" isLast>
-            <NextPhaseButton nextPhase="data-model" />
+            <NextPhaseButton nextPhase="data-shape" />
           </StepIndicator>
         )}
       </div>
