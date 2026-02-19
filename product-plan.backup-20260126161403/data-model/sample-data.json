@@ -1,0 +1,129 @@
+{
+  "_note": "Sample data for development and testing. Replace with real API data in production.",
+
+  "users": [
+    { "id": "user-001", "name": "Arjun Mehta", "email": "arjun@cadence.io", "role": "founder", "avatar": null, "isActive": true },
+    { "id": "user-002", "name": "Priya Sharma", "email": "priya@cadence.io", "role": "bd", "avatar": null, "isActive": true },
+    { "id": "user-003", "name": "Rahul Verma", "email": "rahul@cadence.io", "role": "bd", "avatar": null, "isActive": true },
+    { "id": "user-004", "name": "Sneha Patel", "email": "sneha@cadence.io", "role": "admin", "avatar": null, "isActive": true }
+  ],
+
+  "pipelines": [
+    {
+      "id": "pipe-001",
+      "name": "NEET Coaching",
+      "description": "Medical entrance exam preparation",
+      "isDefault": true,
+      "stageIds": ["stage-001", "stage-002", "stage-003", "stage-004", "stage-005", "stage-006"]
+    },
+    {
+      "id": "pipe-002",
+      "name": "JEE Coaching",
+      "description": "Engineering entrance exam preparation",
+      "isDefault": false,
+      "stageIds": ["stage-007", "stage-008", "stage-009", "stage-010", "stage-011", "stage-012"]
+    }
+  ],
+
+  "stages": [
+    { "id": "stage-001", "pipelineId": "pipe-001", "name": "New", "type": "open", "order": 1, "color": "slate", "isHot": false },
+    { "id": "stage-002", "pipelineId": "pipe-001", "name": "Contacted", "type": "open", "order": 2, "color": "blue", "isHot": false },
+    { "id": "stage-003", "pipelineId": "pipe-001", "name": "Hot", "type": "open", "order": 3, "color": "amber", "isHot": true },
+    { "id": "stage-004", "pipelineId": "pipe-001", "name": "Demo Scheduled", "type": "open", "order": 4, "color": "indigo", "isHot": true },
+    { "id": "stage-005", "pipelineId": "pipe-001", "name": "Won", "type": "won", "order": 5, "color": "emerald", "isHot": false },
+    { "id": "stage-006", "pipelineId": "pipe-001", "name": "Lost", "type": "lost", "order": 6, "color": "rose", "isHot": false }
+  ],
+
+  "dropReasons": [
+    { "id": "dr-001", "reason": "Price too high", "category": "pricing", "isActive": true, "usageCount": 8 },
+    { "id": "dr-002", "reason": "Not the right time", "category": "timing", "isActive": true, "usageCount": 5 },
+    { "id": "dr-003", "reason": "Chose competitor", "category": "competitor", "isActive": true, "usageCount": 4 },
+    { "id": "dr-004", "reason": "No response after multiple attempts", "category": "noResponse", "isActive": true, "usageCount": 3 },
+    { "id": "dr-005", "reason": "Not eligible for course", "category": "eligibility", "isActive": true, "usageCount": 2 }
+  ],
+
+  "leads": [
+    {
+      "id": "lead-001",
+      "name": "Rajesh Kumar",
+      "phone": "9876543210",
+      "email": "rajesh.kumar@gmail.com",
+      "score": 82,
+      "source": "YouTube",
+      "stage": "Hot",
+      "qualification": "qualified",
+      "ownerId": "user-002",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Sent demo link - check if watched",
+        "dueDate": "2024-01-10",
+        "dueTime": "10:00"
+      },
+      "lastContactDate": "2024-01-08",
+      "createdDate": "2024-01-02",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "Dec 2024",
+        "city": "Delhi",
+        "language": "Hindi"
+      }
+    },
+    {
+      "id": "lead-002",
+      "name": "Priya Sharma",
+      "phone": "8765432109",
+      "email": "priya.sharma92@gmail.com",
+      "score": 75,
+      "source": "WhatsApp Group",
+      "stage": "Contacted",
+      "qualification": "qualified",
+      "ownerId": "user-003",
+      "nextAction": {
+        "type": "follow_up",
+        "reason": "Discussing with family - call to check decision",
+        "dueDate": "2024-01-10",
+        "dueTime": "11:30"
+      },
+      "lastContactDate": "2024-01-09",
+      "createdDate": "2024-01-04",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "Dec 2024",
+        "city": "Mumbai",
+        "language": "English"
+      }
+    },
+    {
+      "id": "lead-003",
+      "name": "Ananya Reddy",
+      "phone": "9654321098",
+      "email": "ananya.reddy@gmail.com",
+      "score": 91,
+      "source": "App Install",
+      "stage": "New",
+      "qualification": "unknown",
+      "ownerId": null,
+      "nextAction": null,
+      "lastContactDate": null,
+      "createdDate": "2024-01-10",
+      "flags": [],
+      "extraFields": {
+        "exam": "UGC NET",
+        "attempt": "June 2024",
+        "city": "Hyderabad",
+        "language": "English"
+      }
+    }
+  ],
+
+  "funnelMetrics": {
+    "callsMade": 156,
+    "connected": 89,
+    "connectRate": 57.1,
+    "hotLeads": 34,
+    "won": 12,
+    "lost": 23
+  }
+}

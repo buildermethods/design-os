@@ -1,0 +1,347 @@
+{
+  "_meta": {
+    "models": {
+      "pipeline": "A sales process container that holds stages. One pipeline must be marked as default for new leads and new BDs.",
+      "stage": "A step in a sales pipeline that leads progress through. Each stage has a type (open/won/lost) and optionally drives the Hot Leads metric.",
+      "dropReason": "A reason why a lead didn't convert, captured when a lead is marked as lost. Used for analytics and coaching.",
+      "user": "A team member who uses Cadence — BD, Admin, or Founder. Users have roles that determine permissions and can be assigned to specific pipelines."
+    },
+    "relationships": [
+      "Pipeline contains many Stages (via stage.pipelineId)",
+      "User is assigned to many Pipelines (via user.assignedPipelineIds)",
+      "Stage belongs to exactly one Pipeline",
+      "Each Pipeline must have exactly one won and one lost Stage"
+    ]
+  },
+  "currentUser": {
+    "id": "user-001",
+    "name": "Arjun Mehta",
+    "email": "arjun@cadence.io",
+    "role": "founder",
+    "permissions": {
+      "canAccessSettings": true,
+      "canManagePipelines": true,
+      "canManageDropReasons": true,
+      "canManageUsers": true
+    }
+  },
+  "ui": {
+    "activeTab": "pipelines",
+    "selectedPipelineId": "pipe-001"
+  },
+  "pipelines": [
+    {
+      "id": "pipe-001",
+      "name": "NEET Coaching",
+      "description": "Medical entrance exam preparation",
+      "isDefault": true,
+      "stageIds": ["stage-001", "stage-002", "stage-003", "stage-004", "stage-005", "stage-006"],
+      "createdAt": "2024-01-15T10:00:00Z",
+      "archivedAt": null
+    },
+    {
+      "id": "pipe-002",
+      "name": "JEE Coaching",
+      "description": "Engineering entrance exam preparation",
+      "isDefault": false,
+      "stageIds": ["stage-007", "stage-008", "stage-009", "stage-010", "stage-011", "stage-012"],
+      "createdAt": "2024-01-15T10:30:00Z",
+      "archivedAt": null
+    },
+    {
+      "id": "pipe-003",
+      "name": "Foundation Course",
+      "description": "Class 9-10 foundation program",
+      "isDefault": false,
+      "stageIds": ["stage-013", "stage-014", "stage-015", "stage-016", "stage-017"],
+      "createdAt": "2024-02-01T09:00:00Z",
+      "archivedAt": null
+    }
+  ],
+  "stages": [
+    {
+      "id": "stage-001",
+      "pipelineId": "pipe-001",
+      "name": "New",
+      "type": "open",
+      "order": 1,
+      "color": "slate",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-002",
+      "pipelineId": "pipe-001",
+      "name": "Contacted",
+      "type": "open",
+      "order": 2,
+      "color": "blue",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-003",
+      "pipelineId": "pipe-001",
+      "name": "Hot",
+      "type": "open",
+      "order": 3,
+      "color": "amber",
+      "isHot": true,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-004",
+      "pipelineId": "pipe-001",
+      "name": "Demo Scheduled",
+      "type": "open",
+      "order": 4,
+      "color": "indigo",
+      "isHot": true,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-005",
+      "pipelineId": "pipe-001",
+      "name": "Won",
+      "type": "won",
+      "order": 5,
+      "color": "emerald",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-006",
+      "pipelineId": "pipe-001",
+      "name": "Lost",
+      "type": "lost",
+      "order": 6,
+      "color": "rose",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-007",
+      "pipelineId": "pipe-002",
+      "name": "New",
+      "type": "open",
+      "order": 1,
+      "color": "slate",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-008",
+      "pipelineId": "pipe-002",
+      "name": "Contacted",
+      "type": "open",
+      "order": 2,
+      "color": "blue",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-009",
+      "pipelineId": "pipe-002",
+      "name": "Hot",
+      "type": "open",
+      "order": 3,
+      "color": "amber",
+      "isHot": true,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-010",
+      "pipelineId": "pipe-002",
+      "name": "Trial Class",
+      "type": "open",
+      "order": 4,
+      "color": "violet",
+      "isHot": true,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-011",
+      "pipelineId": "pipe-002",
+      "name": "Won",
+      "type": "won",
+      "order": 5,
+      "color": "emerald",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-012",
+      "pipelineId": "pipe-002",
+      "name": "Lost",
+      "type": "lost",
+      "order": 6,
+      "color": "rose",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-013",
+      "pipelineId": "pipe-003",
+      "name": "New",
+      "type": "open",
+      "order": 1,
+      "color": "slate",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-014",
+      "pipelineId": "pipe-003",
+      "name": "Contacted",
+      "type": "open",
+      "order": 2,
+      "color": "blue",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-015",
+      "pipelineId": "pipe-003",
+      "name": "Interested",
+      "type": "open",
+      "order": 3,
+      "color": "amber",
+      "isHot": true,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-016",
+      "pipelineId": "pipe-003",
+      "name": "Enrolled",
+      "type": "won",
+      "order": 4,
+      "color": "emerald",
+      "isHot": false,
+      "archivedAt": null
+    },
+    {
+      "id": "stage-017",
+      "pipelineId": "pipe-003",
+      "name": "Dropped",
+      "type": "lost",
+      "order": 5,
+      "color": "rose",
+      "isHot": false,
+      "archivedAt": null
+    }
+  ],
+  "dropReasons": [
+    {
+      "id": "dr-001",
+      "reason": "Price too high",
+      "category": "pricing",
+      "isActive": true,
+      "usageCount": 8,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-002",
+      "reason": "Not the right time",
+      "category": "timing",
+      "isActive": true,
+      "usageCount": 5,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-003",
+      "reason": "Chose competitor",
+      "category": "competitor",
+      "isActive": true,
+      "usageCount": 4,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-004",
+      "reason": "No response after multiple attempts",
+      "category": "noResponse",
+      "isActive": true,
+      "usageCount": 3,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-005",
+      "reason": "Not eligible for course",
+      "category": "eligibility",
+      "isActive": true,
+      "usageCount": 2,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-006",
+      "reason": "Already enrolled elsewhere",
+      "category": "competitor",
+      "isActive": true,
+      "usageCount": 1,
+      "archivedAt": null
+    },
+    {
+      "id": "dr-007",
+      "reason": "Budget constraints (old)",
+      "category": "pricing",
+      "isActive": false,
+      "usageCount": 12,
+      "archivedAt": "2024-06-01T10:00:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Arjun Mehta",
+      "email": "arjun@cadence.io",
+      "role": "founder",
+      "isActive": true,
+      "assignedPipelineIds": ["pipe-001", "pipe-002", "pipe-003"],
+      "createdAt": "2024-01-01T00:00:00Z",
+      "deactivatedAt": null
+    },
+    {
+      "id": "user-002",
+      "name": "Priya Sharma",
+      "email": "priya@cadence.io",
+      "role": "bd",
+      "isActive": true,
+      "assignedPipelineIds": ["pipe-001", "pipe-002"],
+      "createdAt": "2024-01-15T10:00:00Z",
+      "deactivatedAt": null
+    },
+    {
+      "id": "user-003",
+      "name": "Rahul Verma",
+      "email": "rahul@cadence.io",
+      "role": "bd",
+      "isActive": true,
+      "assignedPipelineIds": ["pipe-001"],
+      "createdAt": "2024-01-20T09:00:00Z",
+      "deactivatedAt": null
+    },
+    {
+      "id": "user-004",
+      "name": "Sneha Patel",
+      "email": "sneha@cadence.io",
+      "role": "admin",
+      "isActive": true,
+      "assignedPipelineIds": ["pipe-001", "pipe-002", "pipe-003"],
+      "createdAt": "2024-02-01T11:00:00Z",
+      "deactivatedAt": null
+    },
+    {
+      "id": "user-005",
+      "name": "Vikram Singh",
+      "email": "vikram@cadence.io",
+      "role": "bd",
+      "isActive": false,
+      "assignedPipelineIds": ["pipe-002"],
+      "createdAt": "2024-02-15T14:00:00Z",
+      "deactivatedAt": "2024-08-01T10:00:00Z"
+    }
+  ],
+  "systemRules": {
+    "pipelineHint": "Each pipeline must have exactly one Won and one Lost stage. These stages power conversion and drop analytics.",
+    "defaultPipelineWarning": "Changing the default pipeline will affect where new leads are created. Existing leads will not be changed."
+  }
+}

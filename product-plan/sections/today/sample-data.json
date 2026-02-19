@@ -1,0 +1,314 @@
+{
+  "_meta": {
+    "models": {
+      "stats": "Today's progress metrics showing calls made, connections, follow-ups cleared, and remaining work.",
+      "leads": "Prospective customers with their score, source, stage, contact info, and call history.",
+      "calls": "Records of each call attempt — the result, what was discussed (if connected), and what action was taken.",
+      "followUps": "Scheduled follow-up actions with due dates, reasons, and completion status."
+    },
+    "relationships": [
+      "Each Lead has a list of Calls (their call history)",
+      "Leads in the Follow-ups Due tab have a pending FollowUp attached",
+      "Each Call records the Call Result, and if connected, the Conversation Outcome and Next Action taken"
+    ]
+  },
+  "stats": {
+    "callsMade": 12,
+    "connected": 5,
+    "followUpsCleared": 3,
+    "remainingInQueue": 9
+  },
+  "followUpsDue": [
+    {
+      "id": "lead-001",
+      "name": "Rajesh Kumar",
+      "phone": "+91 98765 43210",
+      "email": "rajesh.kumar@gmail.com",
+      "score": 82,
+      "source": "YouTube",
+      "stage": "Hot",
+      "lastContactDate": "2024-01-08",
+      "followUp": {
+        "id": "fu-001",
+        "reason": "Sent demo link - check if watched",
+        "dueDate": "2024-01-10",
+        "dueTime": "10:00",
+        "priority": "high"
+      },
+      "calls": [
+        {
+          "id": "call-001",
+          "date": "2024-01-08",
+          "time": "14:30",
+          "callResult": "connected",
+          "conversationOutcome": "call_back_later",
+          "nextAction": "send_demo_link",
+          "notes": "Interested in UGC NET Paper 2. Asked for demo before deciding. Will watch and call back."
+        },
+        {
+          "id": "call-002",
+          "date": "2024-01-05",
+          "time": "11:15",
+          "callResult": "did_not_pick",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "lead-002",
+      "name": "Priya Sharma",
+      "phone": "+91 87654 32109",
+      "email": "priya.sharma92@gmail.com",
+      "score": 75,
+      "source": "WhatsApp Group",
+      "stage": "Contacted",
+      "lastContactDate": "2024-01-09",
+      "followUp": {
+        "id": "fu-002",
+        "reason": "Discussing with family - call to check decision",
+        "dueDate": "2024-01-10",
+        "dueTime": "11:30",
+        "priority": "high"
+      },
+      "calls": [
+        {
+          "id": "call-003",
+          "date": "2024-01-09",
+          "time": "16:00",
+          "callResult": "connected",
+          "conversationOutcome": "discuss_with_family",
+          "nextAction": "schedule_follow_up",
+          "notes": "Very interested. Preparing for Dec 2024 attempt. Needs to confirm budget with parents."
+        }
+      ]
+    },
+    {
+      "id": "lead-003",
+      "name": "Amit Verma",
+      "phone": "+91 99887 76655",
+      "email": "amit.verma@yahoo.com",
+      "score": 68,
+      "source": "App Install",
+      "stage": "Contacted",
+      "lastContactDate": "2024-01-07",
+      "followUp": {
+        "id": "fu-003",
+        "reason": "Requested discount - check with manager and call back",
+        "dueDate": "2024-01-10",
+        "dueTime": "14:00",
+        "priority": "medium"
+      },
+      "calls": [
+        {
+          "id": "call-004",
+          "date": "2024-01-07",
+          "time": "10:30",
+          "callResult": "connected",
+          "conversationOutcome": "need_discount",
+          "nextAction": "schedule_follow_up",
+          "notes": "Likes the course but says it's expensive. Asked if we can offer 20% discount. Said will check with manager."
+        }
+      ]
+    },
+    {
+      "id": "lead-004",
+      "name": "Sneha Patel",
+      "phone": "+91 88776 65544",
+      "email": "sneha.patel@gmail.com",
+      "score": 71,
+      "source": "Referral",
+      "stage": "Hot",
+      "lastContactDate": "2024-01-09",
+      "followUp": {
+        "id": "fu-004",
+        "reason": "Sent payment link - confirm payment",
+        "dueDate": "2024-01-10",
+        "dueTime": "15:30",
+        "priority": "high"
+      },
+      "calls": [
+        {
+          "id": "call-005",
+          "date": "2024-01-09",
+          "time": "18:00",
+          "callResult": "connected",
+          "conversationOutcome": null,
+          "nextAction": "send_payment_link",
+          "notes": "Ready to buy! Referred by Meera who took our UPSC course. Sent payment link on WhatsApp."
+        }
+      ]
+    },
+    {
+      "id": "lead-005",
+      "name": "Vikram Singh",
+      "phone": "+91 77665 54433",
+      "email": "vikram.singh@outlook.com",
+      "score": 58,
+      "source": "YouTube",
+      "stage": "Contacted",
+      "lastContactDate": "2024-01-06",
+      "followUp": {
+        "id": "fu-005",
+        "reason": "Retry - did not pick last 2 times",
+        "dueDate": "2024-01-10",
+        "dueTime": "17:00",
+        "priority": "low"
+      },
+      "calls": [
+        {
+          "id": "call-006",
+          "date": "2024-01-06",
+          "time": "12:00",
+          "callResult": "did_not_pick",
+          "notes": null
+        },
+        {
+          "id": "call-007",
+          "date": "2024-01-04",
+          "time": "15:30",
+          "callResult": "phone_busy",
+          "notes": null
+        }
+      ]
+    }
+  ],
+  "newLeads": [
+    {
+      "id": "lead-006",
+      "name": "Ananya Reddy",
+      "phone": "+91 96543 21098",
+      "email": "ananya.reddy@gmail.com",
+      "score": 91,
+      "source": "App Install",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-007",
+      "name": "Rohit Mehta",
+      "phone": "+91 85432 10987",
+      "email": "rohit.mehta@gmail.com",
+      "score": 85,
+      "source": "YouTube",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-008",
+      "name": "Kavita Joshi",
+      "phone": "+91 94321 09876",
+      "email": "kavita.joshi@yahoo.com",
+      "score": 79,
+      "source": "WhatsApp Group",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-009",
+      "name": "Suresh Nair",
+      "phone": "+91 83210 98765",
+      "email": "suresh.nair@gmail.com",
+      "score": 74,
+      "source": "Paid Ad",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-010",
+      "name": "Deepa Iyer",
+      "phone": "+91 92109 87654",
+      "email": "deepa.iyer@gmail.com",
+      "score": 67,
+      "source": "Referral",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-011",
+      "name": "Manoj Gupta",
+      "phone": "+91 81098 76543",
+      "email": "manoj.gupta@outlook.com",
+      "score": 62,
+      "source": "App Install",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    },
+    {
+      "id": "lead-012",
+      "name": "Neha Kapoor",
+      "phone": "+91 90987 65432",
+      "email": "neha.kapoor@gmail.com",
+      "score": 55,
+      "source": "YouTube",
+      "stage": "New",
+      "lastContactDate": null,
+      "calls": []
+    }
+  ],
+  "callResultOptions": [
+    { "id": "did_not_pick", "label": "Did not pick" },
+    { "id": "phone_busy", "label": "Phone Busy" },
+    { "id": "unreachable", "label": "Unreachable" },
+    { "id": "number_incorrect", "label": "Number Incorrect" },
+    { "id": "connected", "label": "Connected" }
+  ],
+  "conversationOutcomeOptions": [
+    {
+      "category": "Intent / Fit",
+      "options": [
+        { "id": "just_browsing", "label": "Just browsing (low intent)" },
+        { "id": "other_exam", "label": "Preparing for other exam" },
+        { "id": "not_eligible", "label": "Not eligible / Not a student" },
+        { "id": "product_unavailable", "label": "Product not available" }
+      ]
+    },
+    {
+      "category": "Timing",
+      "options": [
+        { "id": "call_back_later", "label": "Asked to call back later" },
+        { "id": "discuss_with_family", "label": "Want to discuss with family" }
+      ]
+    },
+    {
+      "category": "Competition",
+      "options": [
+        { "id": "already_purchased_competitor", "label": "Already purchased from competitor" },
+        { "id": "competitor_cheaper", "label": "Competitor offering lower price" }
+      ]
+    },
+    {
+      "category": "Pricing",
+      "options": [
+        { "id": "affordability_barrier", "label": "Affordability barrier" },
+        { "id": "need_discount", "label": "Need discount" }
+      ]
+    },
+    {
+      "category": "Customer State",
+      "options": [
+        { "id": "already_customer", "label": "Already a customer" }
+      ]
+    }
+  ],
+  "nextActionOptions": [
+    { "id": "send_demo_link", "label": "Send demo link", "requiresFollowUp": true },
+    { "id": "send_payment_link", "label": "Send payment link", "requiresFollowUp": true },
+    { "id": "schedule_follow_up", "label": "Schedule follow-up", "requiresFollowUp": true },
+    { "id": "close_won", "label": "Close Won", "requiresFollowUp": false },
+    { "id": "close_lost", "label": "Close Lost", "requiresFollowUp": false }
+  ],
+  "retryTimeOptions": [
+    { "id": "30min", "label": "In 30 minutes" },
+    { "id": "1hour", "label": "In 1 hour" },
+    { "id": "2hours", "label": "In 2 hours" },
+    { "id": "tomorrow_morning", "label": "Tomorrow morning" },
+    { "id": "tomorrow_afternoon", "label": "Tomorrow afternoon" },
+    { "id": "custom", "label": "Custom date/time" }
+  ]
+}

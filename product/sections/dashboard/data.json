@@ -1,0 +1,204 @@
+{
+  "_meta": {
+    "models": {
+      "currentUser": "The logged-in user viewing the dashboard. Their role determines which filters they can see and use.",
+      "funnelMetrics": "Aggregated counts for the sales funnel, derived from Lead and Call entities. Each metric includes a drilldownFilter for navigating to the Leads section with the correct filters applied.",
+      "dropReasonStats": "Breakdown of why leads were lost, aggregated from leads with a lost status. Includes an 'Unknown' bucket for leads where no drop reason was captured.",
+      "filterOptions": "Available filter values with visibility metadata. Each filter specifies who can see it (all users vs founder_only) and its default selection."
+    },
+    "relationships": [
+      "FunnelMetrics are aggregated from Lead and Call entities for the selected date range and filters",
+      "DropReasonStats are aggregated from Leads where stage = 'Lost', grouped by DropReason",
+      "FilterOptions.bds lists Users with role 'BD'",
+      "FilterOptions.sources, pipelines, and stages come from their respective entities"
+    ]
+  },
+  "_definitions": {
+    "_note": "Internal alignment: how each metric is calculated. Not for end-user display.",
+    "callsMade": "Count of Call records where call.createdAt falls within selected date range",
+    "connected": "Count of Calls where call.outcome = 'connected' (i.e., lead picked up and conversation happened)",
+    "connectRate": "connected / callsMade * 100",
+    "hotLeads": "Count of Leads where current stage.id = 'stage-hot' AND lead.stageChangedAt falls within selected date range",
+    "won": "Count of Leads where current stage.id = 'stage-won' AND lead.stageChangedAt falls within selected date range",
+    "lost": "Count of Leads where current stage.id = 'stage-lost' AND lead.stageChangedAt falls within selected date range",
+    "dateFields": {
+      "callMetrics": "call.createdAt — when the call was made",
+      "stageMetrics": "lead.stageChangedAt — when the lead entered that stage"
+    }
+  },
+  "currentUser": {
+    "id": "user-001",
+    "name": "Arjun Mehta",
+    "role": "founder"
+  },
+  "funnelMetrics": {
+    "callsMade": {
+      "value": 156,
+      "label": "Calls Made",
+      "drilldownFilter": {
+        "hasCall": true,
+        "callDateRange": "selected_range"
+      }
+    },
+    "connected": {
+      "value": 89,
+      "label": "Connected",
+      "drilldownFilter": {
+        "hasConnectedCall": true,
+        "callDateRange": "selected_range"
+      }
+    },
+    "connectRate": {
+      "value": 57.1,
+      "label": "Connect Rate",
+      "unit": "percent",
+      "drilldownFilter": null
+    },
+    "hotLeads": {
+      "value": 34,
+      "label": "Hot Leads",
+      "drilldownFilter": {
+        "stageIn": ["stage-hot"],
+        "stageChangedInRange": true
+      }
+    },
+    "won": {
+      "value": 12,
+      "label": "Won",
+      "drilldownFilter": {
+        "stageIn": ["stage-won"],
+        "stageChangedInRange": true
+      }
+    },
+    "lost": {
+      "value": 23,
+      "label": "Lost",
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "stageChangedInRange": true
+      }
+    }
+  },
+  "dropReasonStats": [
+    {
+      "dropReasonId": "dr-001",
+      "reason": "Price too high",
+      "count": 8,
+      "percentage": 34.8,
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "dropReasonId": "dr-001",
+        "stageChangedInRange": true
+      }
+    },
+    {
+      "dropReasonId": "dr-002",
+      "reason": "Not the right time",
+      "count": 5,
+      "percentage": 21.7,
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "dropReasonId": "dr-002",
+        "stageChangedInRange": true
+      }
+    },
+    {
+      "dropReasonId": "dr-003",
+      "reason": "Chose competitor",
+      "count": 4,
+      "percentage": 17.4,
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "dropReasonId": "dr-003",
+        "stageChangedInRange": true
+      }
+    },
+    {
+      "dropReasonId": "dr-004",
+      "reason": "No response after multiple attempts",
+      "count": 3,
+      "percentage": 13.0,
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "dropReasonId": "dr-004",
+        "stageChangedInRange": true
+      }
+    },
+    {
+      "dropReasonId": null,
+      "reason": "Unknown / Not captured",
+      "count": 3,
+      "percentage": 13.0,
+      "drilldownFilter": {
+        "stageIn": ["stage-lost"],
+        "dropReasonId": null,
+        "stageChangedInRange": true
+      }
+    }
+  ],
+  "filterOptions": {
+    "dateRange": {
+      "options": [
+        { "id": "today", "label": "Today" },
+        { "id": "this_week", "label": "This Week" },
+        { "id": "this_month", "label": "This Month" },
+        { "id": "custom", "label": "Custom Range" }
+      ],
+      "visibility": "all",
+      "default": "today"
+    },
+    "bds": {
+      "options": [
+        { "id": "all", "label": "All Team" },
+        { "id": "user-002", "label": "Priya Sharma" },
+        { "id": "user-003", "label": "Rahul Verma" },
+        { "id": "user-004", "label": "Sneha Patel" },
+        { "id": "user-005", "label": "Vikram Singh" }
+      ],
+      "visibility": "founder_only",
+      "default": "all"
+    },
+    "sources": {
+      "options": [
+        { "id": "all", "label": "All Sources" },
+        { "id": "src-001", "label": "YouTube" },
+        { "id": "src-002", "label": "WhatsApp Group" },
+        { "id": "src-003", "label": "App Install" },
+        { "id": "src-004", "label": "Referral" },
+        { "id": "src-005", "label": "Paid Ads" }
+      ],
+      "visibility": "all",
+      "default": "all"
+    },
+    "pipelines": {
+      "options": [
+        { "id": "all", "label": "All Pipelines" },
+        { "id": "pipe-001", "label": "NEET Coaching" },
+        { "id": "pipe-002", "label": "JEE Coaching" },
+        { "id": "pipe-003", "label": "Foundation Course" }
+      ],
+      "visibility": "all",
+      "default": "all"
+    },
+    "stages": {
+      "options": [
+        { "id": "all", "label": "All Stages" },
+        { "id": "stage-new", "label": "New" },
+        { "id": "stage-contacted", "label": "Contacted" },
+        { "id": "stage-hot", "label": "Hot" },
+        { "id": "stage-demo", "label": "Demo Scheduled" },
+        { "id": "stage-won", "label": "Won" },
+        { "id": "stage-lost", "label": "Lost" }
+      ],
+      "visibility": "all",
+      "default": "all"
+    }
+  },
+  "selectedFilters": {
+    "dateRange": "today",
+    "bdId": "all",
+    "sourceId": "all",
+    "pipelineId": "all",
+    "stageId": "all"
+  }
+}
