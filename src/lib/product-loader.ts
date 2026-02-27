@@ -27,8 +27,11 @@ const exportZipFiles = import.meta.glob('/product-plan.zip', {
  */
 function slugify(str: string): string {
   return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (é→e, ü→u, etc.)
     .toLowerCase()
     .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
+    .replace(/['']/g, '')          // Remove apostrophes without inserting hyphens
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
 }
