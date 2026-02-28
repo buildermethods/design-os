@@ -3,7 +3,12 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "remoteUser": "node",
+  "containerEnv": {
+    "VITE_HOST": "::"
+  },
   "postCreateCommand": "npm install",
+  "appPort": [3000],
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
