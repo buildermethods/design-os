@@ -97,7 +97,7 @@ Create the file at `product/sections/[section-id]/spec.md` with this exact forma
 **Important:**
 - Set `shell: true` if the section should display inside the app shell (this is the default)
 - Set `shell: false` if the section should display as a standalone page without the shell
-- The section-id is the slug version of the section title (lowercase, hyphens instead of spaces)
+- The section-id is the slug version of the section title: lowercase, spaces → hyphens, and **` & ` → `-and-`** (e.g. "Composants & UI" → `composants-and-ui`). This must match exactly what the app's `slugify()` function produces.
 - Don't add features that weren't discussed. Don't leave out features that were discussed.
 
 ### 6b: Generate Sample Data and Types
