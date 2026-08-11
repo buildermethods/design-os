@@ -3,6 +3,10 @@
 Get notified of major releases by subscribing here:
 https://buildermethods.com/design-os
 
+## [2026.8.10]
+
+- Adopted the [agentcanon](https://github.com/buildermethods/agentcanon) convention: `AGENTS.md` and `.agents/skills/` are now the canonical locations for agent instructions and skills, with `CLAUDE.md` and `.claude/skills` as committed symlinks pointing to them. Works across Claude Code, Codex, and any agent tool that reads the open `.agents` standard. Instructions content is unchanged.
+
 ## [2026.2.9]
 
 - Streamlined `/product-vision`: now generates the product overview, product roadmap, and data shape all in one conversational flow. After clarifying questions, all three files are written automatically without draft approval.
