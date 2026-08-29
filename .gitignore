@@ -21,3 +21,6 @@ dist/
 # Logs
 *.log
 npm-debug.log*
+
+# Amp orb runtime files
+.amp/portals/*
